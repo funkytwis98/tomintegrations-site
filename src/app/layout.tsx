@@ -30,8 +30,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="sticky top-0 z-50 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
             <Link href="/" className="text-lg font-semibold tracking-tight">
-              <span className="text-neutral-100">Your</span>
-              <span className="text-amber-400">Brand</span>
+              <span className="text-neutral-100">Tom</span>
+              <span className="text-amber-400"> Agency</span>
             </Link>
 
             <nav className="hidden gap-6 text-sm text-neutral-300 md:flex">
