@@ -112,6 +112,9 @@ export default function ContactPage() {
         return;
       }
 
+      setValues(initialValues);
+      setErrors({});
+      setGeneralError(null);
       setSubmitted(true);
     } catch {
       setGeneralError("Unable to submit right now. Please check your connection and try again.");
