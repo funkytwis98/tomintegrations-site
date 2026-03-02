@@ -3,7 +3,7 @@ import "./globals.css";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "YourBrand",
+  title: "Tom Agency",
   description: "AI Receptionist and AI Social Media Manager for small businesses.",
 };
 
