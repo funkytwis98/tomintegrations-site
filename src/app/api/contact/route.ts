@@ -100,11 +100,11 @@ export async function POST(request: Request) {
 
     const resend = new Resend(apiKey);
 
-    const fullName = payload.fullName!.trim();
-    const businessName = payload.businessName!.trim();
-    const email = payload.email!.trim();
-    const phone = payload.phone!.trim();
-    const interest = payload.interest!.trim();
+    const fullName = String(payload.fullName).trim();
+    const businessName = String(payload.businessName).trim();
+    const email = String(payload.email).trim();
+    const phone = String(payload.phone).trim();
+    const interest = String(payload.interest).trim();
     const message = typeof payload.message === "string" ? payload.message.trim() : "";
     const submittedTime = new Date().toISOString();
 
