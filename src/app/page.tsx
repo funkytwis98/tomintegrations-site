@@ -16,7 +16,7 @@ export default function Home() {
           </h1>
 
           <p className="mt-5 text-neutral-300">
-            YourBrand gives you an AI Receptionist that answers, qualifies, and books.
+            Tom Agency gives you an AI Receptionist that answers, qualifies, and books.
             Plus an AI Social Media Manager that keeps your business looking active and professional.
           </p>
 

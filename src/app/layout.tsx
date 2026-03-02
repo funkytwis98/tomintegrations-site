@@ -59,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <footer className="border-t border-neutral-800">
           <div className="mx-auto max-w-6xl px-6 py-10 text-sm text-neutral-400">
-            © {new Date().getFullYear()} YourBrand. All rights reserved.
+            © {new Date().getFullYear()} Tom Agency. All rights reserved.
           </div>
         </footer>
       </body>
