@@ -46,6 +46,110 @@ function resendMessageId(result: unknown): string | null {
   return typeof candidate === "string" ? candidate : null;
 }
 
+type InternalBookingEmailInput = {
+  bookingId: number;
+  fullName: string;
+  businessName: string;
+  email: string;
+  phone: string;
+  interest: string;
+  notes: string;
+  slotDisplay: string;
+  timezone: string;
+  slotStartISO: string;
+  slotEndISO: string;
+};
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function buildInternalBookingEmail(input: InternalBookingEmailInput) {
+  const safeBookingId = escapeHtml(String(input.bookingId));
+  const safeFullName = escapeHtml(input.fullName);
+  const safeBusinessName = escapeHtml(input.businessName);
+  const safeEmail = escapeHtml(input.email);
+  const safePhone = escapeHtml(input.phone);
+  const safeInterest = escapeHtml(input.interest);
+  const safeNotes = escapeHtml(input.notes || "(none)");
+  const safeSlotDisplay = escapeHtml(input.slotDisplay);
+  const safeTimezone = escapeHtml(input.timezone);
+  const safeSlotStartISO = escapeHtml(input.slotStartISO);
+  const safeSlotEndISO = escapeHtml(input.slotEndISO);
+
+  const text = [
+    "New booking received",
+    "",
+    `Booking ID: ${input.bookingId}`,
+    `Name: ${input.fullName}`,
+    `Business: ${input.businessName}`,
+    `Email: ${input.email}`,
+    `Phone: ${input.phone}`,
+    `Interest: ${input.interest}`,
+    `Notes: ${input.notes || "(none)"}`,
+    `When: ${input.slotDisplay} (${input.timezone})`,
+    `Slot start: ${input.slotStartISO}`,
+    `Slot end: ${input.slotEndISO}`,
+  ].join("\n");
+
+  const html = `
+    <div style="background:#f5f5f5;padding:20px;font-family:Arial,Helvetica,sans-serif;color:#111111;line-height:1.4;">
+      <h1 style="margin:0 0 12px 0;font-size:22px;">New booking received</h1>
+      <div style="background:#ffffff;border:1px solid #e5e5e5;border-radius:8px;padding:16px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
+          <tr>
+            <td style="padding:6px 0;width:140px;font-weight:700;vertical-align:top;">Booking ID</td>
+            <td style="padding:6px 0;">${safeBookingId}</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:700;vertical-align:top;">Name</td>
+            <td style="padding:6px 0;">${safeFullName}</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:700;vertical-align:top;">Business</td>
+            <td style="padding:6px 0;">${safeBusinessName}</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:700;vertical-align:top;">Email</td>
+            <td style="padding:6px 0;"><a href="mailto:${safeEmail}" style="color:#111111;text-decoration:underline;">${safeEmail}</a></td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:700;vertical-align:top;">Phone</td>
+            <td style="padding:6px 0;"><a href="tel:${safePhone}" style="color:#111111;text-decoration:underline;">${safePhone}</a></td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:700;vertical-align:top;">Interest</td>
+            <td style="padding:6px 0;">${safeInterest}</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:700;vertical-align:top;">Notes</td>
+            <td style="padding:6px 0;">${safeNotes}</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:700;vertical-align:top;">When</td>
+            <td style="padding:6px 0;">${safeSlotDisplay} (${safeTimezone})</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:700;vertical-align:top;">Slot start</td>
+            <td style="padding:6px 0;font-family:Menlo,Consolas,monospace;">${safeSlotStartISO}</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:700;vertical-align:top;">Slot end</td>
+            <td style="padding:6px 0;font-family:Menlo,Consolas,monospace;">${safeSlotEndISO}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  `;
+
+  return { html, text };
+}
+
 function validatePayload(input: BookingPayload): ValidationErrors {
   const errors: ValidationErrors = {};
 
@@ -193,20 +297,19 @@ export async function POST(request: Request) {
       "Reply to this email if you need to reschedule.",
     ].join("\n");
 
-    const internalText = [
-      "New booking received",
-      "",
-      `Booking ID: ${bookingId}`,
-      `Name: ${fullName}`,
-      `Business: ${businessName}`,
-      `Email: ${email}`,
-      `Phone: ${phone}`,
-      `Interest: ${interest}`,
-      `Notes: ${notes || "(none)"}`,
-      `When: ${slotDisplay} (${timezone})`,
-      `Slot start: ${slotStartISO}`,
-      `Slot end: ${slotEndISO}`,
-    ].join("\n");
+    const internalEmail = buildInternalBookingEmail({
+      bookingId,
+      fullName,
+      businessName,
+      email,
+      phone,
+      interest,
+      notes,
+      slotDisplay,
+      timezone,
+      slotStartISO,
+      slotEndISO,
+    });
 
     const [customerResult, internalResult] = await Promise.all([
       resend.emails.send({
@@ -221,7 +324,8 @@ export async function POST(request: Request) {
         to: notifyEmail,
         replyTo: email,
         subject: `New booking: ${businessName}`,
-        text: internalText,
+        html: internalEmail.html,
+        text: internalEmail.text,
       }),
     ]);
 
