@@ -4,10 +4,11 @@ import {
   dateKeyInTimezone,
   formatSlotDisplay,
   getBookingConfig,
-  listBusyTimes,
+  getMissingBookingEnvVarsForHealth,
   weekdayFromDateKey,
   zonedDateTimeToUtcISO,
-} from "@/src/lib/googleCalendar";
+} from "@/src/lib/bookingConfig";
+import { ensureBookingsTable, listOverlappingBookings } from "@/src/lib/bookingsDb";
 
 export const runtime = "nodejs";
 
@@ -25,6 +26,20 @@ function overlaps(startA: string, endA: string, startB: string, endB: string): b
 
 export async function GET(request: Request) {
   try {
+    const missing = getMissingBookingEnvVarsForHealth();
+    if (missing.length > 0) {
+      return Response.json(
+        {
+          ok: false,
+          error: `Missing required booking environment variable(s): ${missing.join(", ")}`,
+          missing,
+        },
+        { status: 500 }
+      );
+    }
+
+    await ensureBookingsTable();
+
     const { timezone, slotMinutes, workHours } = getBookingConfig();
     const { searchParams } = new URL(request.url);
 
@@ -42,9 +57,10 @@ export async function GET(request: Request) {
     const endDateKey = addDaysToDateKey(startDateKey, days);
     const rangeEnd = zonedDateTimeToUtcISO(endDateKey, "00:00", timezone);
 
-    const busyTimes = await listBusyTimes(rangeStart, rangeEnd);
+    const busyTimes = await listOverlappingBookings(rangeStart, rangeEnd);
     const now = new Date();
     const slots: Slot[] = [];
+
     const dayFormatter = new Intl.DateTimeFormat("en-US", {
       timeZone: timezone,
       weekday: "short",
@@ -73,7 +89,9 @@ export async function GET(request: Request) {
           }
 
           const isPast = new Date(currentStart) <= now;
-          const isBusy = busyTimes.some((busy) => overlaps(currentStart, currentEnd, busy.start, busy.end));
+          const isBusy = busyTimes.some((busy) =>
+            overlaps(currentStart, currentEnd, busy.slot_start.toString(), busy.slot_end.toString())
+          );
           if (!isPast && !isBusy) {
             const startDate = new Date(currentStart);
             slots.push({

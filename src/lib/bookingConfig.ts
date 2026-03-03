@@ -1,30 +1,13 @@
-import { google } from "googleapis";
-
-const CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar";
-const DEFAULT_WORK_HOURS =
-  '{"mon":[["09:00","17:00"]],"tue":[["09:00","17:00"]],"wed":[["09:00","17:00"]],"thu":[["09:00","17:00"]],"fri":[["09:00","17:00"]],"sat":[],"sun":[]}';
-
 export type WeekdayKey = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 
 export type BookingConfig = {
-  calendarId: string;
   timezone: string;
   slotMinutes: number;
   workHours: Record<WeekdayKey, Array<[string, string]>>;
 };
 
-type FreeBusyRange = {
-  start: string;
-  end: string;
-};
-
-type CreateEventInput = {
-  start: string;
-  end: string;
-  summary: string;
-  description: string;
-  attendeeEmail?: string;
-};
+const DEFAULT_WORK_HOURS =
+  '{"mon":[["09:00","17:00"]],"tue":[["09:00","17:00"]],"wed":[["09:00","17:00"]],"thu":[["09:00","17:00"]],"fri":[["09:00","17:00"]],"sat":[],"sun":[]}';
 
 const weekdayOrder: WeekdayKey[] = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
@@ -37,15 +20,6 @@ export class BookingConfigError extends Error {
     this.missing = missing;
   }
 }
-
-type BookingEnv = {
-  serviceAccountEmail: string;
-  serviceAccountPrivateKey: string;
-  calendarId: string;
-  timezone: string;
-  slotMinutes: number;
-  workHours: Record<WeekdayKey, Array<[string, string]>>;
-};
 
 function parseWorkHours(raw: string): Record<WeekdayKey, Array<[string, string]>> {
   const parsed = JSON.parse(raw) as unknown;
@@ -77,40 +51,18 @@ function parseWorkHours(raw: string): Record<WeekdayKey, Array<[string, string]>
 }
 
 export function getBookingConfig(): BookingConfig {
-  const env = getValidatedBookingEnv();
-  return {
-    calendarId: env.calendarId,
-    timezone: env.timezone,
-    slotMinutes: env.slotMinutes,
-    workHours: env.workHours,
-  };
-}
-
-export function getCalendarClient() {
-  const env = getValidatedBookingEnv();
-
-  const auth = new google.auth.JWT({
-    email: env.serviceAccountEmail,
-    key: env.serviceAccountPrivateKey,
-    scopes: [CALENDAR_SCOPE],
-  });
-
-  return google.calendar({ version: "v3", auth });
-}
-
-export function getValidatedBookingEnv(): BookingEnv {
-  const requiredKeys = [
-    "GOOGLE_SERVICE_ACCOUNT_EMAIL",
-    "GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY",
-    "GOOGLE_CALENDAR_ID",
-  ] as const;
-
-  const missing = requiredKeys.filter((key) => !process.env[key] || !String(process.env[key]).trim());
+  const missing: string[] = [];
+  if (!process.env.BOOKING_TIMEZONE) {
+    missing.push("BOOKING_TIMEZONE");
+  }
+  if (!process.env.BOOKING_SLOT_MINUTES) {
+    missing.push("BOOKING_SLOT_MINUTES");
+  }
+  if (!process.env.BOOKING_WORK_HOURS_JSON) {
+    missing.push("BOOKING_WORK_HOURS_JSON");
+  }
   if (missing.length > 0) {
-    throw new BookingConfigError(
-      `Missing required booking environment variable(s): ${missing.join(", ")}`,
-      [...missing]
-    );
+    throw new BookingConfigError(`Missing required booking environment variable(s): ${missing.join(", ")}`, missing);
   }
 
   const timezone = process.env.BOOKING_TIMEZONE ?? "America/Chicago";
@@ -119,74 +71,27 @@ export function getValidatedBookingEnv(): BookingEnv {
     throw new BookingConfigError("BOOKING_SLOT_MINUTES must be a positive number.");
   }
 
-  const serviceAccountEmail = String(process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL).trim();
-  const serviceAccountPrivateKey = String(process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY).replace(/\\n/g, "\n");
-  const calendarId = String(process.env.GOOGLE_CALENDAR_ID).trim();
-  if (!serviceAccountPrivateKey.includes("BEGIN PRIVATE KEY")) {
-    throw new BookingConfigError(
-      "GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY looks invalid. Paste the private_key from the service account JSON and keep \\n escapes."
-    );
-  }
-
-  let workHours: Record<WeekdayKey, Array<[string, string]>>;
   try {
-    workHours = parseWorkHours(process.env.BOOKING_WORK_HOURS_JSON ?? DEFAULT_WORK_HOURS);
+    const workHours = parseWorkHours(process.env.BOOKING_WORK_HOURS_JSON ?? DEFAULT_WORK_HOURS);
+    return { timezone, slotMinutes, workHours };
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "BOOKING_WORK_HOURS_JSON must be a valid JSON object.";
     throw new BookingConfigError(message);
   }
-
-  return {
-    serviceAccountEmail,
-    serviceAccountPrivateKey,
-    calendarId,
-    timezone,
-    slotMinutes,
-    workHours,
-  };
 }
 
-export async function listBusyTimes(timeMin: string, timeMax: string): Promise<FreeBusyRange[]> {
-  const { calendarId } = getBookingConfig();
-  const calendar = getCalendarClient();
-
-  const response = await calendar.freebusy.query({
-    requestBody: {
-      timeMin,
-      timeMax,
-      items: [{ id: calendarId }],
-    },
-  });
-
-  const busy = response.data.calendars?.[calendarId]?.busy ?? [];
-  return busy
-    .filter((item): item is { start: string; end: string } => Boolean(item.start && item.end))
-    .map((item) => ({ start: item.start, end: item.end }));
-}
-
-export async function createEvent({
-  start,
-  end,
-  summary,
-  description,
-  attendeeEmail,
-}: CreateEventInput) {
-  const { calendarId, timezone } = getBookingConfig();
-  const calendar = getCalendarClient();
-
-  const response = await calendar.events.insert({
-    calendarId,
-    requestBody: {
-      summary,
-      description,
-      start: { dateTime: start, timeZone: timezone },
-      end: { dateTime: end, timeZone: timezone },
-      attendees: attendeeEmail ? [{ email: attendeeEmail }] : undefined,
-    },
-  });
-
-  return response.data;
+export function getMissingBookingEnvVarsForHealth() {
+  const required = [
+    "POSTGRES_URL",
+    "RESEND_API_KEY",
+    "CONTACT_FROM_EMAIL",
+    "CONTACT_TO_EMAIL",
+    "BOOKING_TIMEZONE",
+    "BOOKING_SLOT_MINUTES",
+    "BOOKING_WORK_HOURS_JSON",
+  ] as const;
+  return required.filter((key) => !process.env[key] || !String(process.env[key]).trim());
 }
 
 function zonedParts(date: Date, timezone: string) {

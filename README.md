@@ -1,21 +1,21 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Booking Setup (Google Calendar + Resend)
+## Booking Setup (Custom Scheduler + Postgres + Resend)
 
-This project uses a service account to read/write a dedicated Google Calendar for `/book`.
+Booking no longer depends on Google Calendar.
 
-1. Create a dedicated Google Calendar.
-2. Share it with your service account email and grant **Make changes to events**.
-3. Copy `.env.example` to `.env.local` and set:
-   - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
-   - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` (escaped with `\n` in one line)
-   - `GOOGLE_CALENDAR_ID`
+1. Attach Vercel Postgres and set `POSTGRES_URL`.
+2. Copy `.env.example` to `.env.local`.
+3. Set:
+   - `POSTGRES_URL`
+   - `RESEND_API_KEY`
+   - `CONTACT_FROM_EMAIL`
+   - `CONTACT_TO_EMAIL`
+   - `ADMIN_PASSWORD`
    - `BOOKING_TIMEZONE`
    - `BOOKING_SLOT_MINUTES`
    - `BOOKING_WORK_HOURS_JSON`
-   - `RESEND_API_KEY`
-   - `CONTACT_FROM_EMAIL`
-   - `CONTACT_TO_EMAIL` (or `BOOKING_NOTIFY_EMAIL`)
+4. See [docs/booking-setup.md](docs/booking-setup.md) for full setup + curl tests.
 
 ## Getting Started
 

@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 
-import { BookingConfigError, createEvent, getBookingConfig, listBusyTimes } from "@/src/lib/googleCalendar";
+import { BookingConfigError, getBookingConfig, getMissingBookingEnvVarsForHealth } from "@/src/lib/bookingConfig";
+import { createBooking, ensureBookingsTable, listOverlappingBookings } from "@/src/lib/bookingsDb";
 
 export const runtime = "nodejs";
 
@@ -27,14 +28,6 @@ type ValidationErrors = {
   slotEndISO?: string;
 };
 
-function resendMessageId(result: unknown): string | null {
-  if (!result || typeof result !== "object") {
-    return null;
-  }
-  const candidate = (result as { data?: { id?: unknown } }).data?.id;
-  return typeof candidate === "string" ? candidate : null;
-}
-
 const validInterestOptions: InterestOption[] = [
   "AI Receptionist",
   "AI Social Media Manager",
@@ -44,6 +37,14 @@ const validInterestOptions: InterestOption[] = [
 
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === "string" && value.trim().length > 0;
+
+function resendMessageId(result: unknown): string | null {
+  if (!result || typeof result !== "object") {
+    return null;
+  }
+  const candidate = (result as { data?: { id?: unknown } }).data?.id;
+  return typeof candidate === "string" ? candidate : null;
+}
 
 function validatePayload(input: BookingPayload): ValidationErrors {
   const errors: ValidationErrors = {};
@@ -93,10 +94,6 @@ function validatePayload(input: BookingPayload): ValidationErrors {
   return errors;
 }
 
-function overlaps(startA: Date, endA: Date, startB: string, endB: string): boolean {
-  return startA < new Date(endB) && endA > new Date(startB);
-}
-
 export async function POST(request: Request) {
   try {
     const payload = (await request.json()) as BookingPayload;
@@ -108,13 +105,27 @@ export async function POST(request: Request) {
 
     const apiKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.CONTACT_FROM_EMAIL;
-    const notifyEmail = process.env.BOOKING_NOTIFY_EMAIL ?? process.env.CONTACT_TO_EMAIL;
+    const notifyEmail = process.env.CONTACT_TO_EMAIL;
     if (!apiKey || !fromEmail || !notifyEmail) {
       return Response.json(
         { ok: false, error: "Server is missing required email configuration." },
         { status: 500 }
       );
     }
+
+    const missing = getMissingBookingEnvVarsForHealth();
+    if (missing.length > 0) {
+      return Response.json(
+        {
+          ok: false,
+          error: `Missing required booking environment variable(s): ${missing.join(", ")}`,
+          missing,
+        },
+        { status: 500 }
+      );
+    }
+
+    await ensureBookingsTable();
 
     const { timezone } = getBookingConfig();
     const fullName = String(payload.fullName).trim();
@@ -126,12 +137,34 @@ export async function POST(request: Request) {
     const slotStartISO = new Date(String(payload.slotStartISO)).toISOString();
     const slotEndISO = new Date(String(payload.slotEndISO)).toISOString();
 
-    const slotBusy = await listBusyTimes(slotStartISO, slotEndISO);
-    const start = new Date(slotStartISO);
-    const end = new Date(slotEndISO);
-    const taken = slotBusy.some((busy) => overlaps(start, end, busy.start, busy.end));
-    if (taken) {
+    const overlapping = await listOverlappingBookings(slotStartISO, slotEndISO);
+    if (overlapping.length > 0) {
       return Response.json({ ok: false, error: "Slot no longer available." }, { status: 409 });
+    }
+
+    let bookingId: number | null = null;
+    try {
+      bookingId = await createBooking({
+        fullName,
+        businessName,
+        email,
+        phone,
+        interest,
+        notes,
+        slotStartISO,
+        slotEndISO,
+        timezone,
+      });
+    } catch (error) {
+      const pgCode = (error as { code?: string })?.code;
+      if (pgCode === "23505") {
+        return Response.json({ ok: false, error: "Slot no longer available." }, { status: 409 });
+      }
+      throw error;
+    }
+
+    if (!bookingId) {
+      return Response.json({ ok: false, error: "Could not create booking." }, { status: 500 });
     }
 
     const slotDisplay = new Intl.DateTimeFormat("en-US", {
@@ -142,41 +175,7 @@ export async function POST(request: Request) {
       year: "numeric",
       hour: "numeric",
       minute: "2-digit",
-    }).format(start);
-
-    const eventDescription = [
-      "Tom Agency booking",
-      "",
-      `Full name: ${fullName}`,
-      `Business name: ${businessName}`,
-      `Email: ${email}`,
-      `Phone: ${phone}`,
-      `Interest: ${interest}`,
-      `Notes: ${notes || "(none)"}`,
-      `Timezone: ${timezone}`,
-      `Slot start (ISO): ${slotStartISO}`,
-      `Slot end (ISO): ${slotEndISO}`,
-    ].join("\n");
-
-    const eventInput = {
-      start: slotStartISO,
-      end: slotEndISO,
-      summary: `Tom Agency Call: ${businessName}`,
-      description: eventDescription,
-      attendeeEmail: email,
-    };
-
-    let event;
-    try {
-      event = await createEvent(eventInput);
-    } catch (eventError) {
-      const message = eventError instanceof Error ? eventError.message : "";
-      if (!message.includes("Domain-Wide Delegation")) {
-        throw eventError;
-      }
-      // Fallback for non-Google-Workspace service accounts: create event without attendees.
-      event = await createEvent({ ...eventInput, attendeeEmail: undefined });
-    }
+    }).format(new Date(slotStartISO));
 
     const resend = new Resend(apiKey);
     const customerSubject = "Tom Agency booking confirmed";
@@ -197,6 +196,7 @@ export async function POST(request: Request) {
     const internalText = [
       "New booking received",
       "",
+      `Booking ID: ${bookingId}`,
       `Name: ${fullName}`,
       `Business: ${businessName}`,
       `Email: ${email}`,
@@ -204,8 +204,8 @@ export async function POST(request: Request) {
       `Interest: ${interest}`,
       `Notes: ${notes || "(none)"}`,
       `When: ${slotDisplay} (${timezone})`,
-      `Event ID: ${event.id ?? "(unknown)"}`,
-      `Event Link: ${event.htmlLink ?? "(none)"}`,
+      `Slot start: ${slotStartISO}`,
+      `Slot end: ${slotEndISO}`,
     ].join("\n");
 
     const [customerResult, internalResult] = await Promise.all([
@@ -237,8 +237,9 @@ export async function POST(request: Request) {
 
     return Response.json({
       ok: true,
-      eventId: event.id ?? null,
-      eventLink: event.htmlLink ?? null,
+      bookingId,
+      slotStartISO,
+      slotEndISO,
       emailCustomerId,
       emailInternalId,
     });
