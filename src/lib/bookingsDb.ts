@@ -15,7 +15,14 @@ export type BookingRow = {
   status: string;
 };
 
+function ensureDatabaseUrlFallback() {
+  if (!process.env.POSTGRES_URL && process.env.DATABASE_URL) {
+    process.env.POSTGRES_URL = process.env.DATABASE_URL;
+  }
+}
+
 export async function ensureBookingsTable() {
+  ensureDatabaseUrlFallback();
   await sql`
     CREATE TABLE IF NOT EXISTS bookings (
       id BIGSERIAL PRIMARY KEY,
@@ -40,6 +47,7 @@ export async function ensureBookingsTable() {
 }
 
 export async function listOverlappingBookings(startISO: string, endISO: string) {
+  ensureDatabaseUrlFallback();
   const result = await sql<Pick<BookingRow, "slot_start" | "slot_end">>`
     SELECT slot_start, slot_end
     FROM bookings
@@ -61,6 +69,7 @@ export async function createBooking(input: {
   slotEndISO: string;
   timezone: string;
 }) {
+  ensureDatabaseUrlFallback();
   const result = await sql<Pick<BookingRow, "id">>`
     INSERT INTO bookings (
       full_name,
@@ -93,6 +102,7 @@ export async function createBooking(input: {
 }
 
 export async function listRecentBookings(limit = 100) {
+  ensureDatabaseUrlFallback();
   const safeLimit = Math.max(1, Math.min(500, Math.floor(limit)));
   const result = await sql<BookingRow>`
     SELECT

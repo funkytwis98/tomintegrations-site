@@ -82,8 +82,8 @@ export function getBookingConfig(): BookingConfig {
 }
 
 export function getMissingBookingEnvVarsForHealth() {
+  const hasPostgres = Boolean(process.env.POSTGRES_URL?.trim() || process.env.DATABASE_URL?.trim());
   const required = [
-    "POSTGRES_URL",
     "RESEND_API_KEY",
     "CONTACT_FROM_EMAIL",
     "CONTACT_TO_EMAIL",
@@ -91,7 +91,11 @@ export function getMissingBookingEnvVarsForHealth() {
     "BOOKING_SLOT_MINUTES",
     "BOOKING_WORK_HOURS_JSON",
   ] as const;
-  return required.filter((key) => !process.env[key] || !String(process.env[key]).trim());
+  const missing: string[] = required.filter((key) => !process.env[key] || !String(process.env[key]).trim());
+  if (!hasPostgres) {
+    missing.unshift("POSTGRES_URL");
+  }
+  return missing;
 }
 
 function zonedParts(date: Date, timezone: string) {
