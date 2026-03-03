@@ -89,11 +89,8 @@ function extractEmailAddress(value: string): string {
 }
 
 function normalizeFromEmail(value: string): string {
-  const trimmed = value.trim();
-  if (/<[^>]+>/.test(trimmed)) {
-    return trimmed;
-  }
-  return `Tom Agency <${trimmed}>`;
+  const email = extractEmailAddress(value);
+  return `Tom Agency <${email}>`;
 }
 
 function buildInternalBookingEmail(input: InternalBookingEmailInput) {
