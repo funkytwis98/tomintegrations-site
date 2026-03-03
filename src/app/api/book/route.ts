@@ -88,6 +88,14 @@ function extractEmailAddress(value: string): string {
   return value.trim();
 }
 
+function normalizeFromEmail(value: string): string {
+  const trimmed = value.trim();
+  if (/<[^>]+>/.test(trimmed)) {
+    return trimmed;
+  }
+  return `Tom Agency <${trimmed}>`;
+}
+
 function buildInternalBookingEmail(input: InternalBookingEmailInput) {
   const safeBookingId = escapeHtml(String(input.bookingId));
   const safeFullName = escapeHtml(input.fullName);
@@ -97,7 +105,6 @@ function buildInternalBookingEmail(input: InternalBookingEmailInput) {
   const safeInterest = escapeHtml(input.interest);
   const safeNotes = escapeHtml(input.notes || "(none)");
   const safeSlotDisplay = escapeHtml(input.slotDisplay);
-  const safeTimezone = escapeHtml(input.timezone);
 
   const text = [
     "New booking received",
@@ -109,7 +116,7 @@ function buildInternalBookingEmail(input: InternalBookingEmailInput) {
     `Phone: ${input.phone}`,
     `Interest: ${input.interest}`,
     `Notes: ${input.notes || "(none)"}`,
-    `When: ${input.slotDisplay} (${input.timezone})`,
+    `When: ${input.slotDisplay}`,
   ].join("\n");
 
   const html = `
@@ -147,7 +154,7 @@ function buildInternalBookingEmail(input: InternalBookingEmailInput) {
           </tr>
           <tr>
             <td style="padding:6px 0;font-weight:700;vertical-align:top;">When</td>
-            <td style="padding:6px 0;">${safeSlotDisplay} (${safeTimezone})</td>
+            <td style="padding:6px 0;">${safeSlotDisplay}</td>
           </tr>
         </table>
       </div>
@@ -380,7 +387,8 @@ export async function POST(request: Request) {
     const resend = new Resend(apiKey);
     const customerSubject = "Tom Agency booking confirmed";
     const detailsUrl = process.env.SITE_URL ?? "https://yourbrand-site-dun.vercel.app";
-    const rescheduleEmail = extractEmailAddress(fromEmail);
+    const normalizedFromEmail = normalizeFromEmail(fromEmail);
+    const rescheduleEmail = extractEmailAddress(normalizedFromEmail);
     const customerEmail = buildCustomerBookingEmail({
       fullName,
       businessName,
@@ -414,7 +422,7 @@ export async function POST(request: Request) {
 
     const [customerResult, internalResult] = await Promise.all([
       resend.emails.send({
-        from: fromEmail,
+        from: normalizedFromEmail,
         to: email,
         replyTo: notifyEmail,
         subject: customerSubject,
@@ -429,7 +437,7 @@ export async function POST(request: Request) {
         ],
       }),
       resend.emails.send({
-        from: fromEmail,
+        from: normalizedFromEmail,
         to: notifyEmail,
         replyTo: email,
         subject: `New booking: ${businessName}`,
