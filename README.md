@@ -1,5 +1,22 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Booking Setup (Google Calendar + Resend)
+
+This project uses a service account to read/write a dedicated Google Calendar for `/book`.
+
+1. Create a dedicated Google Calendar.
+2. Share it with your service account email and grant **Make changes to events**.
+3. Copy `.env.example` to `.env.local` and set:
+   - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
+   - `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` (escaped with `\n` in one line)
+   - `GOOGLE_CALENDAR_ID`
+   - `BOOKING_TIMEZONE`
+   - `BOOKING_SLOT_MINUTES`
+   - `BOOKING_WORK_HOURS_JSON`
+   - `RESEND_API_KEY`
+   - `CONTACT_FROM_EMAIL`
+   - `CONTACT_TO_EMAIL` (or `BOOKING_NOTIFY_EMAIL`)
+
 ## Getting Started
 
 First, run the development server:
