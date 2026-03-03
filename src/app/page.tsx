@@ -2,15 +2,15 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="space-y-16">
+    <main className="space-y-12 sm:space-y-16">
       {/* HERO */}
-      <section className="grid gap-10 md:grid-cols-2 md:items-center">
+      <section className="grid gap-8 md:grid-cols-2 md:items-center md:gap-10">
         <div>
-          <p className="inline-flex items-center rounded-full border border-neutral-800 bg-neutral-900/60 px-3 py-1 text-xs text-neutral-300">
+          <p className="inline-block max-w-full rounded-full border border-neutral-800 bg-neutral-900/60 px-3 py-1 text-xs leading-relaxed text-neutral-300">
             Built for small businesses who want more calls, more bookings, and more trust.
           </p>
 
-          <h1 className="mt-5 text-4xl font-semibold tracking-tight md:text-5xl">
+          <h1 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
             Stop missing customers.
             <span className="text-amber-400"> Let AI handle the front desk and the posting.</span>
           </h1>
@@ -43,7 +43,7 @@ export default function Home() {
         </div>
 
         {/* HERO CARD */}
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+        <div className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 sm:p-6">
           <div className="space-y-4">
             <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4">
               <p className="text-xs text-neutral-400">Example: inbound call</p>
@@ -106,7 +106,7 @@ export default function Home() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-8">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className="text-2xl font-semibold">How it works</h2>
@@ -176,7 +176,7 @@ export default function Home() {
           <p className="text-sm text-neutral-300">
             Want to see this on your business in 10 minutes?
           </p>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <Link
               href="/book"
               className="rounded-md bg-amber-400 px-5 py-2.5 text-sm font-semibold text-neutral-950 hover:bg-amber-300 transition-colors"
@@ -194,7 +194,7 @@ export default function Home() {
       </section>
 
       {/* PROOF */}
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-8">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className="text-2xl font-semibold">First case study: Interstate Tires</h2>
@@ -213,12 +213,12 @@ export default function Home() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-10 text-center">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-6 text-center sm:p-10">
         <h2 className="text-3xl font-semibold">Want to see it working on your business?</h2>
         <p className="mx-auto mt-3 max-w-2xl text-neutral-300">
           Book a demo and we’ll show you exactly how the receptionist handles calls and how the social manager produces posts.
         </p>
-        <div className="mt-7 flex justify-center gap-3">
+        <div className="mt-7 flex flex-wrap justify-center gap-3">
           <Link
             href="/book"
             className="rounded-md bg-amber-400 px-6 py-3 text-sm font-semibold text-neutral-950 hover:bg-amber-300 transition-colors"

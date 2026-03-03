@@ -20,7 +20,7 @@ const nav = [
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-neutral-950 text-neutral-100 antialiased">
+      <body className="min-h-screen overflow-x-hidden bg-neutral-950 text-neutral-100 antialiased">
         <header className="sticky top-0 z-50 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-4 sm:px-6">
             <Link href="/" className="text-lg font-semibold tracking-tight">
@@ -52,7 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">{children}</main>
 
         <footer className="border-t border-neutral-800">
-          <div className="mx-auto max-w-6xl px-6 py-10 text-sm text-neutral-400">
+          <div className="mx-auto max-w-6xl px-4 py-10 text-sm text-neutral-400 sm:px-6">
             © {new Date().getFullYear()} Tom Agency. All rights reserved.
           </div>
         </footer>

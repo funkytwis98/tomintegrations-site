@@ -187,14 +187,14 @@ export default function BookPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-6">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-6">
         <h1 className="text-3xl font-semibold">Book a Demo</h1>
         <p className="mt-2 text-neutral-300">
           Pick an available time and share your details. We&apos;ll send a confirmation email right after booking.
         </p>
       </section>
 
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-6">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-6">
         <h2 className="text-xl font-semibold text-amber-300">Choose a time</h2>
         {slotsLoading && <p className="mt-4 text-sm text-neutral-400">Loading available slots...</p>}
         {slotsError && <p className="mt-4 text-sm text-red-400">{slotsError}</p>}
@@ -203,11 +203,11 @@ export default function BookPage() {
         )}
 
         {!slotsLoading && !slotsError && slots.length > 0 && (
-          <div className="mt-5 space-y-5">
+          <div className="mt-5 max-h-[30rem] space-y-5 overflow-y-auto pr-1">
             {groupedSlots.map((group) => (
               <div key={group.dayLabel}>
                 <p className="text-sm font-semibold text-neutral-200">{group.dayLabel}</p>
-                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                <div className="mt-3 flex gap-2 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0">
                   {group.items.map((slot) => {
                     const isSelected = selectedSlot?.startISO === slot.startISO;
                     return (
@@ -219,7 +219,7 @@ export default function BookPage() {
                           setErrors((prev) => ({ ...prev, slot: undefined }));
                           setSuccessMessage(null);
                         }}
-                        className={`rounded-md border px-3 py-2 text-left text-sm transition-colors ${
+                        className={`whitespace-nowrap rounded-md border px-3 py-2 text-left text-sm transition-colors ${
                           isSelected
                             ? "border-amber-400 bg-amber-400/10 text-amber-200"
                             : "border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-500"
@@ -237,7 +237,7 @@ export default function BookPage() {
         {errors.slot && <p className="mt-3 text-xs text-red-400">{errors.slot}</p>}
       </section>
 
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-5 sm:p-6">
         <h2 className="text-xl font-semibold">Your details</h2>
         {successMessage && (
           <div className="mt-4 rounded-md border border-amber-400/40 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
