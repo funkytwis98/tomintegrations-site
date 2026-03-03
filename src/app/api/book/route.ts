@@ -2,6 +2,7 @@ import { Resend } from "resend";
 
 import { BookingConfigError, getBookingConfig, getMissingBookingEnvVarsForHealth } from "@/src/lib/bookingConfig";
 import { createBooking, ensureBookingsTable, listOverlappingBookings } from "@/src/lib/bookingsDb";
+import { buildBookingInviteIcs } from "@/src/lib/ics";
 
 export const runtime = "nodejs";
 
@@ -67,6 +68,7 @@ type CustomerBookingEmailInput = {
   slotDisplay: string;
   timezone: string;
   detailsUrl: string;
+  rescheduleEmail: string;
 };
 
 function escapeHtml(value: string) {
@@ -76,6 +78,14 @@ function escapeHtml(value: string) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function extractEmailAddress(value: string): string {
+  const angleMatch = value.match(/<([^>]+)>/);
+  if (angleMatch?.[1]) {
+    return angleMatch[1].trim();
+  }
+  return value.trim();
 }
 
 function buildInternalBookingEmail(input: InternalBookingEmailInput) {
@@ -166,6 +176,7 @@ function buildCustomerBookingEmail(input: CustomerBookingEmailInput) {
   const safeSlotDisplay = escapeHtml(input.slotDisplay);
   const safeTimezone = escapeHtml(input.timezone);
   const safeDetailsUrl = escapeHtml(input.detailsUrl);
+  const safeRescheduleEmail = escapeHtml(input.rescheduleEmail);
 
   const text = [
     `Hi ${input.fullName},`,
@@ -174,10 +185,11 @@ function buildCustomerBookingEmail(input: CustomerBookingEmailInput) {
     `When: ${input.slotDisplay} (${input.timezone})`,
     `Business: ${input.businessName}`,
     `Interest: ${input.interest}`,
+    "Add to Calendar: open the attached tom-agency-demo.ics file.",
     "",
     `View details: ${input.detailsUrl}`,
     "",
-    "If you need to reschedule, reply to this email.",
+    `Need to reschedule? Email ${input.rescheduleEmail}`,
   ].join("\n");
 
   const html = `
@@ -211,6 +223,11 @@ function buildCustomerBookingEmail(input: CustomerBookingEmailInput) {
           </td>
         </tr>
         <tr>
+          <td style="padding:0 20px 12px 20px;font-size:14px;color:#333333;">
+            Add to Calendar: open the attached <strong>tom-agency-demo.ics</strong> file.
+          </td>
+        </tr>
+        <tr>
           <td style="padding:4px 20px 16px 20px;">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
               <tr>
@@ -222,8 +239,13 @@ function buildCustomerBookingEmail(input: CustomerBookingEmailInput) {
           </td>
         </tr>
         <tr>
+          <td style="padding:0 20px 6px 20px;font-size:14px;font-weight:700;color:#111111;">
+            Need to reschedule?
+          </td>
+        </tr>
+        <tr>
           <td style="padding:0 20px 20px 20px;font-size:13px;color:#555555;">
-            If you need to reschedule, reply to this email.
+            Reply to this email or contact us at <a href="mailto:${safeRescheduleEmail}" style="color:#111111;text-decoration:underline;">${safeRescheduleEmail}</a>.
           </td>
         </tr>
       </table>
@@ -367,6 +389,7 @@ export async function POST(request: Request) {
     const resend = new Resend(apiKey);
     const customerSubject = "Tom Agency booking confirmed";
     const detailsUrl = process.env.SITE_URL ?? "https://yourbrand-site-dun.vercel.app";
+    const rescheduleEmail = extractEmailAddress(fromEmail);
     const customerEmail = buildCustomerBookingEmail({
       fullName,
       businessName,
@@ -374,6 +397,14 @@ export async function POST(request: Request) {
       slotDisplay,
       timezone,
       detailsUrl,
+      rescheduleEmail,
+    });
+    const customerInviteIcs = buildBookingInviteIcs({
+      bookingId,
+      slotStartISO,
+      slotEndISO,
+      businessName,
+      interest,
     });
 
     const internalEmail = buildInternalBookingEmail({
@@ -398,6 +429,13 @@ export async function POST(request: Request) {
         subject: customerSubject,
         html: customerEmail.html,
         text: customerEmail.text,
+        attachments: [
+          {
+            filename: "tom-agency-demo.ics",
+            content: Buffer.from(customerInviteIcs, "utf8").toString("base64"),
+            contentType: "text/calendar; charset=utf-8; method=REQUEST",
+          },
+        ],
       }),
       resend.emails.send({
         from: fromEmail,
