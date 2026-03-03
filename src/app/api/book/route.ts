@@ -385,6 +385,7 @@ export async function POST(request: Request) {
     const customerSubject = "Tom Agency booking confirmed";
     const detailsUrl = process.env.SITE_URL ?? "https://yourbrand-site-dun.vercel.app";
     const normalizedFromEmail = normalizeFromEmail(fromEmail);
+    console.log("[booking] resend from:", normalizedFromEmail);
     const rescheduleEmail = extractEmailAddress(normalizedFromEmail);
     const customerEmail = buildCustomerBookingEmail({
       fullName,
