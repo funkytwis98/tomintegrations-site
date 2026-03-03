@@ -135,16 +135,16 @@ export default function ContactPage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-6 md:p-8">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-6 md:p-8">
         <p className="text-xs uppercase tracking-wide text-neutral-400">Contact</p>
-        <h1 className="mt-2 text-3xl font-semibold md:text-4xl">Contact</h1>
+        <h1 className="mt-2 text-2xl font-semibold sm:text-3xl md:text-4xl">Contact</h1>
         <p className="mt-3 max-w-3xl text-neutral-300">
           Tell us what you need. We’ll reply within 1 business day.
         </p>
       </section>
 
       <section className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-6 md:p-8">
+        <div className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-6 md:p-8">
           <h2 className="text-xl font-semibold">Before you submit</h2>
           <p className="mt-3 text-sm text-neutral-300">
             Share enough detail so we can recommend the right plan and next step on the first reply.
@@ -170,7 +170,7 @@ export default function ContactPage() {
           </ul>
         </div>
 
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6 md:p-8">
+        <div className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-5 sm:p-6 md:p-8">
           {generalError && (
             <div className="mb-5 rounded-md border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-400">
               {generalError}

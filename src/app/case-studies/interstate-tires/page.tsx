@@ -10,9 +10,11 @@ const highlights = [
 export default function InterstateTiresCaseStudyPage() {
   return (
     <div className="space-y-10">
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-6 md:p-8">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-6 md:p-8">
         <p className="text-xs uppercase tracking-wide text-neutral-400">Case Study</p>
-        <h1 className="mt-3 text-3xl font-semibold md:text-4xl">Interstate Tires: first real-world rollout.</h1>
+        <h1 className="mt-3 text-2xl font-semibold sm:text-3xl md:text-4xl">
+          Interstate Tires: first real-world rollout.
+        </h1>
         <p className="mt-4 max-w-3xl text-neutral-300">
           This project is our proving ground for repeatable AI receptionist + social workflows in local service operations.
         </p>
@@ -26,7 +28,7 @@ export default function InterstateTiresCaseStudyPage() {
         ))}
       </section>
 
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-6 md:p-8">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-6 md:p-8">
         <h2 className="text-2xl font-semibold">Current status</h2>
         <p className="mt-3 text-neutral-300">
           Implementation is active. This page will be updated with concrete metrics like response speed, lead capture rate,
@@ -34,7 +36,7 @@ export default function InterstateTiresCaseStudyPage() {
         </p>
       </section>
 
-      <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-8 text-center">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-5 text-center sm:p-8">
         <h2 className="text-2xl font-semibold">Want this system in your business?</h2>
         <p className="mx-auto mt-3 max-w-2xl text-neutral-300">
           We can walk you through what rollout would look like for your team.
@@ -55,7 +57,7 @@ export default function InterstateTiresCaseStudyPage() {
         </div>
       </section>
 
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-6 md:p-8">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-6 md:p-8">
         <h2 className="text-2xl font-semibold">Examples</h2>
         <p className="mt-2 text-neutral-300">
           Realistic samples of what the system produces. Replace with real screenshots as we collect them.
@@ -90,7 +92,7 @@ export default function InterstateTiresCaseStudyPage() {
 
           <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-5">
             <h3 className="text-sm font-semibold text-amber-300">Lead notification (example)</h3>
-            <div className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
+            <div className="mt-3 grid grid-cols-1 gap-x-3 gap-y-1 text-sm sm:grid-cols-[auto_1fr]">
               <p className="text-neutral-400">Name:</p>
               <p className="text-neutral-200">Jordan M.</p>
               <p className="text-neutral-400">Need:</p>
@@ -123,7 +125,7 @@ export default function InterstateTiresCaseStudyPage() {
         </div>
       </section>
 
-      <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-8 text-center">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-5 text-center sm:p-8">
         <h2 className="text-2xl font-semibold">Want this for your business?</h2>
         <p className="mx-auto mt-3 max-w-2xl text-neutral-300">
           We’ll show you the exact workflow and what it would look like for your shop.

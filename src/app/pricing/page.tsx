@@ -80,9 +80,11 @@ const faqs = [
 export default function PricingPage() {
   return (
     <div className="space-y-10">
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-6 md:p-8">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-6 md:p-8">
         <p className="text-xs uppercase tracking-wide text-neutral-400">Pricing</p>
-        <h1 className="mt-3 text-3xl font-semibold md:text-4xl">Choose the plan that fits your current stage.</h1>
+        <h1 className="mt-3 text-2xl font-semibold sm:text-3xl md:text-4xl">
+          Choose the plan that fits your current stage.
+        </h1>
         <p className="mt-4 max-w-3xl text-neutral-300">
           Start lean, then scale when volume grows. Every plan is built to help you capture more leads without adding
           unnecessary overhead.
@@ -96,7 +98,7 @@ export default function PricingPage() {
           return (
             <article
               key={tier.name}
-              className={`rounded-xl border p-6 ${
+              className={`rounded-xl border p-5 sm:p-6 ${
                 isMiddle
                   ? "border-amber-400 bg-neutral-950 shadow-[0_0_0_1px_rgba(251,191,36,0.2)]"
                   : "border-neutral-800 bg-neutral-900/40"
@@ -143,7 +145,7 @@ export default function PricingPage() {
         })}
       </section>
 
-      <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-6 md:p-8">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-5 sm:p-6 md:p-8">
         <h2 className="text-2xl font-semibold text-amber-300">How pricing works</h2>
         <ul className="mt-5 space-y-3">
           <li className="flex items-start gap-2 text-sm text-neutral-300">
@@ -163,7 +165,7 @@ export default function PricingPage() {
         </ul>
       </section>
 
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-6 md:p-8">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-6 md:p-8">
         <h2 className="text-2xl font-semibold">What’s included in every plan</h2>
         <ul className="mt-5 grid gap-3 md:grid-cols-2">
           {includedInEveryPlan.map((item) => (
@@ -175,7 +177,7 @@ export default function PricingPage() {
         </ul>
       </section>
 
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-6 md:p-8">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-6 md:p-8">
         <h2 className="text-2xl font-semibold">FAQ</h2>
         <div className="mt-5 space-y-4">
           {faqs.map((item) => (

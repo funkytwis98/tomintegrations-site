@@ -9,9 +9,11 @@ const points = [
 export default function BundlePage() {
   return (
     <div className="space-y-10">
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-6 md:p-8">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-6 md:p-8">
         <p className="text-xs uppercase tracking-wide text-neutral-400">Combined Package</p>
-        <h1 className="mt-3 text-3xl font-semibold md:text-4xl">AI Receptionist + AI Social Manager in one package.</h1>
+        <h1 className="mt-3 text-2xl font-semibold sm:text-3xl md:text-4xl">
+          AI Receptionist + AI Social Manager in one package.
+        </h1>
         <p className="mt-4 max-w-3xl text-neutral-300">
           Capture more opportunities from inbound calls while building trust online with consistent social content.
         </p>
@@ -25,7 +27,7 @@ export default function BundlePage() {
         ))}
       </section>
 
-      <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-8 text-center">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-5 text-center sm:p-8">
         <h2 className="text-2xl font-semibold">See the full combined workflow live.</h2>
         <p className="mx-auto mt-3 max-w-2xl text-neutral-300">
           We’ll walk through call handling, lead capture, and social content output in one demo.
