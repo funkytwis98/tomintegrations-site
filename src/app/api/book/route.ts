@@ -193,63 +193,67 @@ function buildCustomerBookingEmail(input: CustomerBookingEmailInput) {
   ].join("\n");
 
   const html = `
-    <div style="background:#f5f5f5;padding:20px;font-family:Arial,Helvetica,sans-serif;color:#111111;line-height:1.4;">
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:640px;margin:0 auto;border-collapse:collapse;background:#ffffff;border:1px solid #e5e5e5;border-radius:8px;">
-        <tr>
-          <td style="padding:20px 20px 8px 20px;font-size:22px;font-weight:700;">Tom Agency booking confirmed</td>
-        </tr>
-        <tr>
-          <td style="padding:0 20px 8px 20px;font-size:16px;">Hi ${safeFullName},</td>
-        </tr>
-        <tr>
-          <td style="padding:0 20px 12px 20px;font-size:16px;">Your demo is booked.</td>
-        </tr>
-        <tr>
-          <td style="padding:0 20px 12px 20px;">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
-              <tr>
-                <td style="padding:6px 0;width:120px;font-weight:700;vertical-align:top;">When</td>
-                <td style="padding:6px 0;">${safeSlotDisplay} (${safeTimezone})</td>
-              </tr>
-              <tr>
-                <td style="padding:6px 0;font-weight:700;vertical-align:top;">Business</td>
-                <td style="padding:6px 0;">${safeBusinessName}</td>
-              </tr>
-              <tr>
-                <td style="padding:6px 0;font-weight:700;vertical-align:top;">Interest</td>
-                <td style="padding:6px 0;">${safeInterest}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:0 20px 12px 20px;font-size:14px;color:#333333;">
-            Add to Calendar: open the attached <strong>tom-agency-demo.ics</strong> file.
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:4px 20px 16px 20px;">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
-              <tr>
-                <td style="background:#111111;border-radius:4px;">
-                  <a href="${safeDetailsUrl}" style="display:inline-block;padding:11px 18px;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;">View details</a>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:0 20px 6px 20px;font-size:14px;font-weight:700;color:#111111;">
-            Need to reschedule?
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:0 20px 20px 20px;font-size:13px;color:#555555;">
-            Reply to this email or contact us at <a href="mailto:${safeRescheduleEmail}" style="color:#111111;text-decoration:underline;">${safeRescheduleEmail}</a>.
-          </td>
-        </tr>
-      </table>
-    </div>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;background:#f5f5f5;border-collapse:collapse;">
+      <tr>
+        <td align="center" style="padding:20px 12px;font-family:Arial,Helvetica,sans-serif;color:#111111;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:640px;border-collapse:separate;background:#ffffff;border:1px solid #e5e5e5;">
+            <tr>
+              <td style="padding:20px 20px 8px 20px;font-size:22px;font-weight:700;line-height:1.25;">Tom Agency booking confirmed</td>
+            </tr>
+            <tr>
+              <td style="padding:0 20px 8px 20px;font-size:16px;line-height:1.45;">Hi ${safeFullName},</td>
+            </tr>
+            <tr>
+              <td style="padding:0 20px 12px 20px;font-size:16px;line-height:1.45;">Your demo is booked.</td>
+            </tr>
+            <tr>
+              <td style="padding:0 20px 12px 20px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
+                  <tr>
+                    <td style="padding:6px 0;width:120px;font-weight:700;vertical-align:top;font-size:14px;line-height:1.4;">When</td>
+                    <td style="padding:6px 0;font-size:14px;line-height:1.4;">${safeSlotDisplay} (${safeTimezone})</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 0;font-weight:700;vertical-align:top;font-size:14px;line-height:1.4;">Business</td>
+                    <td style="padding:6px 0;font-size:14px;line-height:1.4;">${safeBusinessName}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 0;font-weight:700;vertical-align:top;font-size:14px;line-height:1.4;">Interest</td>
+                    <td style="padding:6px 0;font-size:14px;line-height:1.4;">${safeInterest}</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 20px 12px 20px;font-size:14px;color:#333333;line-height:1.45;">
+                Add to Calendar: open the attached <strong>tom-agency-demo.ics</strong> file.
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:4px 20px 16px 20px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                  <tr>
+                    <td style="background:#111111;">
+                      <a href="${safeDetailsUrl}" style="display:inline-block;padding:11px 18px;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;line-height:1;">View details</a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 20px 6px 20px;font-size:14px;font-weight:700;color:#111111;line-height:1.4;">
+                Need to reschedule?
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 20px 20px 20px;font-size:13px;color:#555555;line-height:1.45;">
+                If you need to reschedule, reply to this email or contact us at <a href="mailto:${safeRescheduleEmail}" style="color:#111111;text-decoration:underline;">${safeRescheduleEmail}</a>.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   `;
 
   return { html, text };
