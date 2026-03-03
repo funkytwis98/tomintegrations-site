@@ -98,8 +98,6 @@ function buildInternalBookingEmail(input: InternalBookingEmailInput) {
   const safeNotes = escapeHtml(input.notes || "(none)");
   const safeSlotDisplay = escapeHtml(input.slotDisplay);
   const safeTimezone = escapeHtml(input.timezone);
-  const safeSlotStartISO = escapeHtml(input.slotStartISO);
-  const safeSlotEndISO = escapeHtml(input.slotEndISO);
 
   const text = [
     "New booking received",
@@ -112,8 +110,6 @@ function buildInternalBookingEmail(input: InternalBookingEmailInput) {
     `Interest: ${input.interest}`,
     `Notes: ${input.notes || "(none)"}`,
     `When: ${input.slotDisplay} (${input.timezone})`,
-    `Slot start: ${input.slotStartISO}`,
-    `Slot end: ${input.slotEndISO}`,
   ].join("\n");
 
   const html = `
@@ -153,14 +149,6 @@ function buildInternalBookingEmail(input: InternalBookingEmailInput) {
             <td style="padding:6px 0;font-weight:700;vertical-align:top;">When</td>
             <td style="padding:6px 0;">${safeSlotDisplay} (${safeTimezone})</td>
           </tr>
-          <tr>
-            <td style="padding:6px 0;font-weight:700;vertical-align:top;">Slot start</td>
-            <td style="padding:6px 0;font-family:Menlo,Consolas,monospace;">${safeSlotStartISO}</td>
-          </tr>
-          <tr>
-            <td style="padding:6px 0;font-weight:700;vertical-align:top;">Slot end</td>
-            <td style="padding:6px 0;font-family:Menlo,Consolas,monospace;">${safeSlotEndISO}</td>
-          </tr>
         </table>
       </div>
     </div>
@@ -174,7 +162,6 @@ function buildCustomerBookingEmail(input: CustomerBookingEmailInput) {
   const safeBusinessName = escapeHtml(input.businessName);
   const safeInterest = escapeHtml(input.interest);
   const safeSlotDisplay = escapeHtml(input.slotDisplay);
-  const safeTimezone = escapeHtml(input.timezone);
   const safeDetailsUrl = escapeHtml(input.detailsUrl);
   const safeRescheduleEmail = escapeHtml(input.rescheduleEmail);
 
@@ -182,7 +169,7 @@ function buildCustomerBookingEmail(input: CustomerBookingEmailInput) {
     `Hi ${input.fullName},`,
     "",
     "Your demo is booked.",
-    `When: ${input.slotDisplay} (${input.timezone})`,
+    `When: ${input.slotDisplay}`,
     `Business: ${input.businessName}`,
     `Interest: ${input.interest}`,
     "Add to Calendar: open the attached tom-agency-demo.ics file.",
@@ -211,7 +198,7 @@ function buildCustomerBookingEmail(input: CustomerBookingEmailInput) {
                 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
                   <tr>
                     <td style="padding:6px 0;width:120px;font-weight:700;vertical-align:top;font-size:14px;line-height:1.4;">When</td>
-                    <td style="padding:6px 0;font-size:14px;line-height:1.4;">${safeSlotDisplay} (${safeTimezone})</td>
+                    <td style="padding:6px 0;font-size:14px;line-height:1.4;">${safeSlotDisplay}</td>
                   </tr>
                   <tr>
                     <td style="padding:6px 0;font-weight:700;vertical-align:top;font-size:14px;line-height:1.4;">Business</td>
