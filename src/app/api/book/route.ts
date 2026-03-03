@@ -60,6 +60,15 @@ type InternalBookingEmailInput = {
   slotEndISO: string;
 };
 
+type CustomerBookingEmailInput = {
+  fullName: string;
+  businessName: string;
+  interest: string;
+  slotDisplay: string;
+  timezone: string;
+  detailsUrl: string;
+};
+
 function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")
@@ -144,6 +153,80 @@ function buildInternalBookingEmail(input: InternalBookingEmailInput) {
           </tr>
         </table>
       </div>
+    </div>
+  `;
+
+  return { html, text };
+}
+
+function buildCustomerBookingEmail(input: CustomerBookingEmailInput) {
+  const safeFullName = escapeHtml(input.fullName);
+  const safeBusinessName = escapeHtml(input.businessName);
+  const safeInterest = escapeHtml(input.interest);
+  const safeSlotDisplay = escapeHtml(input.slotDisplay);
+  const safeTimezone = escapeHtml(input.timezone);
+  const safeDetailsUrl = escapeHtml(input.detailsUrl);
+
+  const text = [
+    `Hi ${input.fullName},`,
+    "",
+    "Your demo is booked.",
+    `When: ${input.slotDisplay} (${input.timezone})`,
+    `Business: ${input.businessName}`,
+    `Interest: ${input.interest}`,
+    "",
+    `View details: ${input.detailsUrl}`,
+    "",
+    "If you need to reschedule, reply to this email.",
+  ].join("\n");
+
+  const html = `
+    <div style="background:#f5f5f5;padding:20px;font-family:Arial,Helvetica,sans-serif;color:#111111;line-height:1.4;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:640px;margin:0 auto;border-collapse:collapse;background:#ffffff;border:1px solid #e5e5e5;border-radius:8px;">
+        <tr>
+          <td style="padding:20px 20px 8px 20px;font-size:22px;font-weight:700;">Tom Agency booking confirmed</td>
+        </tr>
+        <tr>
+          <td style="padding:0 20px 8px 20px;font-size:16px;">Hi ${safeFullName},</td>
+        </tr>
+        <tr>
+          <td style="padding:0 20px 12px 20px;font-size:16px;">Your demo is booked.</td>
+        </tr>
+        <tr>
+          <td style="padding:0 20px 12px 20px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
+              <tr>
+                <td style="padding:6px 0;width:120px;font-weight:700;vertical-align:top;">When</td>
+                <td style="padding:6px 0;">${safeSlotDisplay} (${safeTimezone})</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;font-weight:700;vertical-align:top;">Business</td>
+                <td style="padding:6px 0;">${safeBusinessName}</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;font-weight:700;vertical-align:top;">Interest</td>
+                <td style="padding:6px 0;">${safeInterest}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:4px 20px 16px 20px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+              <tr>
+                <td style="background:#111111;border-radius:4px;">
+                  <a href="${safeDetailsUrl}" style="display:inline-block;padding:11px 18px;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;">View details</a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 20px 20px 20px;font-size:13px;color:#555555;">
+            If you need to reschedule, reply to this email.
+          </td>
+        </tr>
+      </table>
     </div>
   `;
 
@@ -283,19 +366,15 @@ export async function POST(request: Request) {
 
     const resend = new Resend(apiKey);
     const customerSubject = "Tom Agency booking confirmed";
-    const customerText = [
-      `Hi ${fullName},`,
-      "",
-      "Your demo is booked.",
-      `When: ${slotDisplay} (${timezone})`,
-      "",
-      "What to expect:",
-      "- We will review your current lead flow",
-      "- We will show receptionist + social workflow",
-      "- We will outline next steps for your business",
-      "",
-      "Reply to this email if you need to reschedule.",
-    ].join("\n");
+    const detailsUrl = process.env.SITE_URL ?? "https://yourbrand-site-dun.vercel.app";
+    const customerEmail = buildCustomerBookingEmail({
+      fullName,
+      businessName,
+      interest,
+      slotDisplay,
+      timezone,
+      detailsUrl,
+    });
 
     const internalEmail = buildInternalBookingEmail({
       bookingId,
@@ -317,7 +396,8 @@ export async function POST(request: Request) {
         to: email,
         replyTo: notifyEmail,
         subject: customerSubject,
-        text: customerText,
+        html: customerEmail.html,
+        text: customerEmail.text,
       }),
       resend.emails.send({
         from: fromEmail,
