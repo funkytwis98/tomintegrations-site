@@ -1,10 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   return (
     <main className="space-y-12 sm:space-y-16">
       {/* HERO */}
-      <section className="grid gap-8 md:grid-cols-2 md:items-center md:gap-10">
+      <section className="grid grid-cols-1 items-center gap-10 md:grid-cols-2">
         <div>
           <p className="inline-block max-w-full rounded-full border border-neutral-800 bg-neutral-900/60 px-3 py-1 text-xs leading-relaxed text-neutral-300">
             Built for small businesses who want more calls, more bookings, and more trust.
@@ -42,33 +43,16 @@ export default function Home() {
           </div>
         </div>
 
-        {/* HERO CARD */}
-        <div className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-4 sm:p-6">
-          <div className="space-y-4">
-            <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4">
-              <p className="text-xs text-neutral-400">Example: inbound call</p>
-              <p className="mt-2 text-sm text-neutral-200">
-                “Hi, thanks for calling. What can we help you with today?”
-              </p>
-              <p className="mt-2 text-sm text-neutral-400">
-                “I need two tires for a 2017 Camry.”
-              </p>
-              <p className="mt-2 text-sm text-neutral-200">
-                “Got it. What size are you running? If you’re not sure, I can look it up from your trim.”
-              </p>
-            </div>
-
-            <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4">
-              <p className="text-xs text-neutral-400">Example: social post draft</p>
-              <p className="mt-2 text-sm text-neutral-200">
-                “Tire Tip Monday: Check your tread with a penny test. If you can see Lincoln’s head,
-                it’s time to replace.”
-              </p>
-              <p className="mt-2 text-xs text-neutral-500">
-                Drafted for approval • scheduled for 9:00 AM
-              </p>
-            </div>
-          </div>
+        {/* HERO VISUAL */}
+        <div className="w-full max-w-full rounded-2xl border border-neutral-800 bg-neutral-900/40 p-3 shadow-sm">
+          <Image
+            src="/hero-mock.svg"
+            alt="Tom Agency AI Receptionist dashboard mockup with call handling and booking workflow"
+            width={1280}
+            height={900}
+            priority
+            className="h-auto w-full rounded-xl"
+          />
         </div>
       </section>
 
