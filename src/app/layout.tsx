@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Link from "next/link";
+import TopTabs from "@/src/components/TopTabs";
 
 export const metadata: Metadata = {
   title: "Tom Agency",
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
           </div>
         </header>
+        <TopTabs />
 
         <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">{children}</main>
 
