@@ -203,11 +203,11 @@ export default function BookPage() {
         )}
 
         {!slotsLoading && !slotsError && slots.length > 0 && (
-          <div className="mt-5 max-h-[30rem] space-y-5 overflow-y-auto pr-1">
+          <div className="mt-5 max-h-none space-y-5 overflow-visible pr-1 md:max-h-[30rem] md:overflow-y-auto">
             {groupedSlots.map((group) => (
               <div key={group.dayLabel}>
                 <p className="text-sm font-semibold text-neutral-200">{group.dayLabel}</p>
-                <div className="mt-3 flex gap-2 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0">
+                <div className="mt-3 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0">
                   {group.items.map((slot) => {
                     const isSelected = selectedSlot?.startISO === slot.startISO;
                     return (
@@ -219,7 +219,7 @@ export default function BookPage() {
                           setErrors((prev) => ({ ...prev, slot: undefined }));
                           setSuccessMessage(null);
                         }}
-                        className={`whitespace-nowrap rounded-md border px-3 py-2 text-left text-sm transition-colors ${
+                        className={`shrink-0 whitespace-nowrap rounded-md border px-3 py-2 text-left text-sm transition-colors ${
                           isSelected
                             ? "border-amber-400 bg-amber-400/10 text-amber-200"
                             : "border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-500"
