@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Link from "next/link";
-import TopTabs from "@/src/components/TopTabs";
+import MobileMenu from "@/src/components/MobileMenu";
 
 export const metadata: Metadata = {
   title: "Tom Agency",
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="min-h-screen overflow-x-hidden bg-neutral-950 text-neutral-100 antialiased">
-        <header className="sticky top-0 z-50 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur">
+        <header className="sticky top-0 z-50 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur relative">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-4 sm:px-6">
             <Link href="/" className="text-lg font-semibold tracking-tight">
               <span className="text-neutral-100">Tom</span>
@@ -41,15 +41,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               ))}
             </nav>
 
-            <Link
-              href="/book"
-              className="rounded-md bg-amber-400 px-3 py-2 text-xs font-semibold text-neutral-950 transition-colors hover:bg-amber-300 sm:px-4 sm:text-sm"
-            >
-              Book a Demo
-            </Link>
+            <div className="flex items-center gap-2">
+              <MobileMenu />
+              <Link
+                href="/book"
+                className="rounded-md bg-amber-400 px-3 py-2 text-xs font-semibold text-neutral-950 transition-colors hover:bg-amber-300 sm:px-4 sm:text-sm"
+              >
+                Book a Demo
+              </Link>
+            </div>
           </div>
         </header>
-        <TopTabs />
 
         <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">{children}</main>
 
