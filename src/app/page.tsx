@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import HeroBackgroundCanvas from "@/src/components/HeroBackgroundCanvas";
+import DemoVideoModal from "@/src/components/DemoVideoModal";
 
 export default function Home() {
   return (
@@ -60,6 +61,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <DemoVideoModal />
 
       {/* VALUE PROPS */}
       <section className="grid gap-4 md:grid-cols-3">
