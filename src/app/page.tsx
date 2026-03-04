@@ -1,12 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
+import HeroBackgroundCanvas from "@/src/components/HeroBackgroundCanvas";
 
 export default function Home() {
   return (
     <main className="space-y-12 sm:space-y-16">
       {/* HERO */}
-      <section className="grid grid-cols-1 items-center gap-10 md:grid-cols-2">
-        <div>
+      <section className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950/70 p-5 sm:p-8">
+        <HeroBackgroundCanvas />
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="relative z-10 grid grid-cols-1 items-center gap-10 md:grid-cols-2">
+          <div>
           <p className="inline-block max-w-full rounded-full border border-neutral-800 bg-neutral-900/60 px-3 py-1 text-xs leading-relaxed text-neutral-300">
             Built for small businesses who want more calls, more bookings, and more trust.
           </p>
@@ -41,18 +45,19 @@ export default function Home() {
             <span>Human approval options</span>
             <span>Built for local service businesses</span>
           </div>
-        </div>
+          </div>
 
-        {/* HERO VISUAL */}
-        <div className="w-full max-w-full rounded-2xl border border-neutral-800 bg-neutral-900/40 p-3 shadow-sm">
-          <Image
-            src="/hero-mock.svg"
-            alt="Tom Agency AI Receptionist dashboard mockup with call handling and booking workflow"
-            width={1280}
-            height={900}
-            priority
-            className="h-auto w-full rounded-xl"
-          />
+          {/* HERO VISUAL */}
+          <div className="w-full max-w-full rounded-2xl border border-neutral-800 bg-neutral-900/40 p-3 shadow-sm">
+            <Image
+              src="/hero-mock.svg"
+              alt="Tom Agency AI Receptionist dashboard mockup with call handling and booking workflow"
+              width={1280}
+              height={900}
+              priority
+              className="h-auto w-full rounded-xl"
+            />
+          </div>
         </div>
       </section>
 
