@@ -50,6 +50,7 @@ export default function BookPage() {
   const [slotsLoading, setSlotsLoading] = useState(true);
   const [slotsError, setSlotsError] = useState<string | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+  const [selectedDayLabel, setSelectedDayLabel] = useState<string>("");
   const [values, setValues] = useState<FormValues>(initialValues);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -94,6 +95,20 @@ export default function BookPage() {
   }, []);
 
   const groupedSlots = useMemo(() => groupSlotsByDay(slots), [slots]);
+  const activeGroup = useMemo(
+    () => groupedSlots.find((group) => group.dayLabel === selectedDayLabel) ?? groupedSlots[0],
+    [groupedSlots, selectedDayLabel],
+  );
+
+  useEffect(() => {
+    if (groupedSlots.length === 0) {
+      setSelectedDayLabel("");
+      return;
+    }
+    if (!groupedSlots.some((group) => group.dayLabel === selectedDayLabel)) {
+      setSelectedDayLabel(groupedSlots[0].dayLabel);
+    }
+  }, [groupedSlots, selectedDayLabel]);
 
   const setField = <K extends keyof FormValues>(field: K, value: FormValues[K]) => {
     setValues((prev) => ({ ...prev, [field]: value }));
@@ -202,38 +217,57 @@ export default function BookPage() {
           <p className="mt-4 text-sm text-neutral-400">No slots are currently open. Please check back soon.</p>
         )}
 
-        {!slotsLoading && !slotsError && slots.length > 0 && (
-          <div className="mt-5 space-y-5">
-            {groupedSlots.map((group) => (
-              <div key={group.dayLabel}>
-                <p className="text-sm font-semibold text-neutral-200">{group.dayLabel}</p>
-                <div className="mt-3 max-h-56 overflow-y-auto pr-1 md:max-h-none md:overflow-visible">
-                  <div className="grid grid-cols-2 gap-2 md:grid-cols-1">
-                    {group.items.map((slot) => {
-                      const isSelected = selectedSlot?.startISO === slot.startISO;
-                      return (
-                        <button
-                          key={slot.startISO}
-                          type="button"
-                          onClick={() => {
-                            setSelectedSlot(slot);
-                            setErrors((prev) => ({ ...prev, slot: undefined }));
-                            setSuccessMessage(null);
-                          }}
-                          className={`h-11 w-full rounded-md border px-3 py-2 text-left text-sm transition-colors ${
-                            isSelected
-                              ? "border-amber-400 bg-amber-400/10 text-amber-200"
-                              : "border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-500"
-                          }`}
-                        >
-                          {slot.timeLabel ?? slot.display}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+        {!slotsLoading && !slotsError && slots.length > 0 && activeGroup && (
+          <div className="mt-5 space-y-4">
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {groupedSlots.map((group) => {
+                const isActiveDay = group.dayLabel === activeGroup.dayLabel;
+                return (
+                  <button
+                    key={group.dayLabel}
+                    type="button"
+                    onClick={() => {
+                      setSelectedDayLabel(group.dayLabel);
+                      setSelectedSlot(null);
+                      setSuccessMessage(null);
+                    }}
+                    className={`h-10 shrink-0 rounded-full border px-4 text-sm font-medium transition-colors ${
+                      isActiveDay
+                        ? "border-amber-400 bg-amber-400/10 text-amber-200"
+                        : "border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-500"
+                    }`}
+                  >
+                    {group.dayLabel}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="max-h-64 overflow-y-auto pr-1 snap-y snap-mandatory">
+              <div className="grid grid-cols-1 gap-2">
+                {activeGroup.items.map((slot) => {
+                  const isSelected = selectedSlot?.startISO === slot.startISO;
+                  return (
+                    <button
+                      key={slot.startISO}
+                      type="button"
+                      onClick={() => {
+                        setSelectedSlot(slot);
+                        setErrors((prev) => ({ ...prev, slot: undefined }));
+                        setSuccessMessage(null);
+                      }}
+                      className={`h-11 w-full snap-start rounded-md border px-3 py-2 text-left text-sm transition-colors ${
+                        isSelected
+                          ? "border-amber-400 bg-amber-400/10 text-amber-200"
+                          : "border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-500"
+                      }`}
+                    >
+                      {slot.timeLabel ?? slot.display}
+                    </button>
+                  );
+                })}
               </div>
-            ))}
+            </div>
           </div>
         )}
         {errors.slot && <p className="mt-3 text-xs text-red-400">{errors.slot}</p>}

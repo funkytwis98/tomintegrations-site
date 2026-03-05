@@ -85,6 +85,18 @@ export default function Home() {
             href={card.href}
             className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6 hover:border-neutral-700 transition-colors"
           >
+            {card.title === "AI Receptionist" && (
+              <div className="mb-4 overflow-hidden rounded-xl border border-neutral-800 bg-black/40">
+                <Image
+                  src="/images/ai-receptionist-widget.png"
+                  alt="Incoming call widget answered by AI"
+                  width={1200}
+                  height={800}
+                  className="h-auto w-full"
+                  priority={false}
+                />
+              </div>
+            )}
             <h3 className="text-lg font-semibold">
               <span className="text-amber-400">●</span> {card.title}
             </h3>
