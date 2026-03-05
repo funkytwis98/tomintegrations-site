@@ -56,9 +56,10 @@ export default function MobileMenu() {
       </button>
 
       {open && (
-        <div className="absolute left-0 right-0 top-full border-b border-neutral-800 bg-black/95 backdrop-blur md:hidden">
-          <div className="mx-auto max-w-6xl px-4 py-3">
-            <div role="menu" className="flex flex-col gap-2">
+        <div className="absolute left-0 right-0 top-full rounded-b-2xl border-b border-neutral-800 bg-black/95 shadow-sm backdrop-blur md:hidden">
+          <div className="mx-auto max-w-6xl px-4 py-2">
+            <p className="px-1 text-xs uppercase tracking-wide text-neutral-400">Menu</p>
+            <div role="menu" className="flex flex-col gap-2 py-2">
               {menuItems.map((item) => {
                 const active = isActive(pathname, item.href);
                 return (
@@ -66,9 +67,9 @@ export default function MobileMenu() {
                     key={item.href}
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className={`rounded-lg border px-4 py-3 text-sm font-medium ${
+                    className={`min-h-11 whitespace-nowrap rounded-lg border px-4 py-3 text-sm font-medium transition-colors flex items-center ${
                       active
-                        ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-200"
+                        ? "border-amber-400/40 bg-amber-400/10 text-amber-200"
                         : "border-neutral-800 text-neutral-200 hover:bg-neutral-900/40"
                     }`}
                   >
