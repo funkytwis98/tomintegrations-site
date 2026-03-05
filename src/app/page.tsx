@@ -12,17 +12,16 @@ export default function Home() {
         <div className="relative z-10 grid grid-cols-1 items-center gap-10 md:grid-cols-2">
           <div>
           <p className="block w-fit max-w-full rounded-full border border-neutral-800 bg-neutral-900/60 px-3 py-1 text-xs leading-relaxed text-neutral-300">
-            Built for small businesses who want more calls, more bookings, and more trust.
+            Built for local service businesses
           </p>
 
           <h1 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
             Stop missing customers.
-            <span className="text-amber-400"> Let AI handle the front desk and the posting.</span>
+            <span className="text-amber-400"> AI answers calls and books jobs. You stay in control.</span>
           </h1>
 
           <p className="mt-5 text-neutral-300">
-            Tom Agency gives you an AI Receptionist that answers, qualifies, and books.
-            Plus an AI Social Media Manager that keeps your business looking active and professional.
+            24/7 AI Receptionist + AI Social Media Manager to capture leads and keep you looking active.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
