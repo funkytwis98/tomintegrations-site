@@ -370,7 +370,7 @@ export default function BookPage() {
           <button
             type="submit"
             disabled={isSubmitting || Boolean(successMessage)}
-            className="w-fit rounded-md bg-amber-400 px-5 py-3 text-sm font-semibold text-neutral-950 transition-colors hover:bg-amber-300 disabled:opacity-70"
+            className="w-full rounded-md bg-amber-400 px-5 py-3 text-sm font-semibold text-neutral-950 transition-colors hover:bg-amber-300 disabled:opacity-70 sm:w-fit"
           >
             {isSubmitting ? "Booking..." : successMessage ? "Booked" : "Confirm booking"}
           </button>
