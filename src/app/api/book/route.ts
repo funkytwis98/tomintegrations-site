@@ -417,8 +417,12 @@ export async function POST(request: Request) {
       slotEndISO,
     });
 
-    const [customerResult, internalResult] = await Promise.all([
-      resend.emails.send({
+    const warnings: string[] = [];
+    let customerResult: Awaited<ReturnType<typeof resend.emails.send>> | null = null;
+    let internalResult: Awaited<ReturnType<typeof resend.emails.send>> | null = null;
+
+    try {
+      customerResult = await resend.emails.send({
         from: normalizedFromEmail,
         to: email,
         replyTo: notifyEmail,
@@ -432,20 +436,34 @@ export async function POST(request: Request) {
             contentType: "text/calendar; charset=utf-8; method=REQUEST",
           },
         ],
-      }),
-      resend.emails.send({
+      });
+      if (customerResult.error) {
+        warnings.push("customer_email_failed");
+        console.error("[booking] customer email failed:", customerResult.error.message);
+      }
+    } catch (error) {
+      warnings.push("customer_email_failed");
+      const message = error instanceof Error ? error.message : "Unknown error";
+      console.error("[booking] customer email failed:", message);
+    }
+
+    try {
+      internalResult = await resend.emails.send({
         from: normalizedFromEmail,
         to: notifyEmail,
         replyTo: email,
         subject: `New booking: ${businessName}`,
         html: internalEmail.html,
         text: internalEmail.text,
-      }),
-    ]);
-
-    const emailError = customerResult.error ?? internalResult.error;
-    if (emailError) {
-      return Response.json({ ok: false, error: emailError.message }, { status: 500 });
+      });
+      if (internalResult.error) {
+        warnings.push("internal_email_failed");
+        console.error("[booking] internal email failed:", internalResult.error.message);
+      }
+    } catch (error) {
+      warnings.push("internal_email_failed");
+      const message = error instanceof Error ? error.message : "Unknown error";
+      console.error("[booking] internal email failed:", message);
     }
 
     const emailCustomerId = resendMessageId(customerResult);
@@ -460,6 +478,7 @@ export async function POST(request: Request) {
       slotEndISO,
       emailCustomerId,
       emailInternalId,
+      warnings,
     });
   } catch (error) {
     if (error instanceof BookingConfigError) {
