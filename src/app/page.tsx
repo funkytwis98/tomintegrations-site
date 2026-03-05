@@ -113,13 +113,14 @@ export default function Home() {
             )}
             {card.title === "Combined Package" && (
               <div className="mb-4 overflow-hidden rounded-xl border border-neutral-800 bg-black/40">
-                <Image
-                  src="/images/combined-package-widget.png"
-                  alt="Combined calls and content dashboard widget"
-                  width={1200}
-                  height={800}
+                <video
                   className="h-auto w-full"
-                  priority={false}
+                  src="/videos/combined-package.mp4"
+                  muted
+                  playsInline
+                  loop
+                  autoPlay
+                  preload="metadata"
                 />
               </div>
             )}
