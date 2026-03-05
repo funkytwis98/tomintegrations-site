@@ -45,9 +45,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <MobileMenu />
               <Link
                 href="/book"
-                className="rounded-md bg-amber-400 px-3 py-2 text-xs font-semibold text-neutral-950 transition-colors hover:bg-amber-300 sm:px-4 sm:text-sm"
+                className="whitespace-nowrap rounded-md bg-amber-400 px-2.5 py-2 text-xs font-semibold text-neutral-950 transition-colors hover:bg-amber-300 sm:px-4 sm:text-sm"
               >
-                Book a Demo
+                <span className="sm:hidden">Book</span>
+                <span className="hidden sm:inline">Book a Demo</span>
               </Link>
             </div>
           </div>
