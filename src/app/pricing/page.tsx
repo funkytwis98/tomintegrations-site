@@ -93,6 +93,7 @@ export default function PricingPage() {
       <section className="grid gap-4 md:grid-cols-3">
         {tiers.map((tier, index) => {
           const isMiddle = index === 1;
+          const isWebsite = tier.name === "Website";
 
           return (
             <article
@@ -100,9 +101,16 @@ export default function PricingPage() {
               className={`rounded-xl border p-5 sm:p-6 ${
                 isMiddle
                   ? "border-amber-400 bg-neutral-950 shadow-[0_0_0_1px_rgba(251,191,36,0.2)]"
+                  : isWebsite
+                    ? "border-amber-300/40 bg-neutral-900/40"
                   : "border-neutral-800 bg-neutral-900/40"
               }`}
             >
+              {isWebsite && (
+                <p className="mb-3 inline-flex rounded-full border border-amber-300/40 bg-amber-300/10 px-2.5 py-1 text-xs font-semibold text-amber-200">
+                  One-time build
+                </p>
+              )}
               <p className="text-xs uppercase tracking-wide text-neutral-400">{tier.tagline}</p>
               <h2 className="mt-2 text-2xl font-semibold">{tier.name}</h2>
               <p className="mt-3 text-xl font-semibold text-amber-300">{tier.price}</p>

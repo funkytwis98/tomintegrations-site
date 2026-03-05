@@ -219,7 +219,11 @@ export default function BookPage() {
 
         {!slotsLoading && !slotsError && slots.length > 0 && activeGroup && (
           <div className="mt-5 space-y-4">
-            <div className="flex gap-2 overflow-x-auto pb-1">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs text-neutral-400">Choose a day</p>
+              <p className="text-xs text-neutral-500">Swipe for more</p>
+            </div>
+            <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1">
               {groupedSlots.map((group) => {
                 const isActiveDay = group.dayLabel === activeGroup.dayLabel;
                 return (
@@ -231,7 +235,7 @@ export default function BookPage() {
                       setSelectedSlot(null);
                       setSuccessMessage(null);
                     }}
-                    className={`h-10 shrink-0 rounded-full border px-4 text-sm font-medium transition-colors ${
+                    className={`h-10 shrink-0 snap-start rounded-full border px-4 text-sm font-medium transition-colors ${
                       isActiveDay
                         ? "border-amber-400 bg-amber-400/10 text-amber-200"
                         : "border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-500"
