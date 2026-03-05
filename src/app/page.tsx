@@ -97,6 +97,17 @@ export default function Home() {
                 />
               </div>
             )}
+            {card.title === "AI Social Media Manager" && (
+              <div className="mb-4 overflow-hidden rounded-xl border border-neutral-800 bg-black/40">
+                <Image
+                  src="/images/ai-social-widget.png"
+                  alt="Social media manager workflow widget"
+                  width={1200}
+                  height={800}
+                  className="h-auto w-full"
+                />
+              </div>
+            )}
             <h3 className="text-lg font-semibold">
               <span className="text-amber-400">●</span> {card.title}
             </h3>
