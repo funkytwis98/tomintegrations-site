@@ -87,13 +87,14 @@ export default function Home() {
           >
             {card.title === "AI Receptionist" && (
               <div className="mb-4 overflow-hidden rounded-xl border border-neutral-800 bg-black/40">
-                <Image
-                  src="/images/ai-receptionist-widget.png"
-                  alt="Incoming call widget answered by AI"
-                  width={1200}
-                  height={800}
+                <video
                   className="h-auto w-full"
-                  priority={false}
+                  src="/videos/ai-receptionist.mp4"
+                  muted
+                  playsInline
+                  loop
+                  autoPlay
+                  preload="metadata"
                 />
               </div>
             )}
