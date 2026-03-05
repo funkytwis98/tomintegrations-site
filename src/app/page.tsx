@@ -1,6 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
 import HeroBackgroundCanvas from "@/src/components/HeroBackgroundCanvas";
-import HeroDemoPanel from "@/src/components/HeroDemoPanel";
 
 export default function Home() {
   return (
@@ -48,7 +48,16 @@ export default function Home() {
           </div>
 
           {/* HERO VISUAL */}
-          <HeroDemoPanel />
+          <div className="w-full max-w-full rounded-2xl border border-neutral-800 bg-neutral-900/40 p-3 shadow-sm">
+            <Image
+              src="/hero-mock.svg"
+              alt="Tom Agency AI Receptionist dashboard mockup with call handling and booking workflow"
+              width={1280}
+              height={900}
+              priority
+              className="h-auto w-full rounded-xl"
+            />
+          </div>
         </div>
       </section>
 
