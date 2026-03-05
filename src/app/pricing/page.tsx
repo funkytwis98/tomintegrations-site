@@ -31,18 +31,17 @@ const tiers = [
     ],
   },
   {
-    name: "Domination",
-    price: "Custom pricing",
-    tagline: "Best for multi-location or aggressive growth",
-    bestFor: "Best for: businesses scaling locations or pushing hard on lead volume.",
-    boundaries: ["Multi-location and higher volume", "Posting and intake scaled to your needs"],
+    name: "Website",
+    price: "Starting at $499",
+    tagline: "A clean, fast website that makes you look legit and gets you calls.",
+    bestFor: "Best for: businesses that need a strong online presence and lead flow.",
+    boundaries: ["Project scope and timeline set before kickoff", "Hosting and updates can be added as needed"],
     features: [
-      "Everything in Growth",
-      "Multi-location call and lead routing setup",
-      "Higher-volume intake handling with escalation rules",
-      "Expanded social content production cadence",
-      "Deeper reporting view across locations or teams",
-      "Ongoing strategy adjustments based on results",
+      "Mobile-friendly, black-and-gold design",
+      "Contact form that emails you leads",
+      "Book-a-demo / booking page setup",
+      "Basic SEO setup (titles, metadata, indexing-ready)",
+      "Fast hosting + analytics ready",
     ],
   },
 ];
@@ -137,7 +136,7 @@ export default function PricingPage() {
                       : "border border-neutral-700 text-neutral-100 hover:border-neutral-600"
                   }`}
                 >
-                  Book a Demo
+                  {tier.name === "Website" ? "Get a Website" : "Book a Demo"}
                 </Link>
               </div>
             </article>
