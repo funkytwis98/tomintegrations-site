@@ -47,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 href="/book"
                 className="whitespace-nowrap rounded-md bg-amber-400 px-2.5 py-2 text-xs font-semibold text-neutral-950 transition-colors hover:bg-amber-300 sm:px-4 sm:text-sm"
               >
-                <span className="sm:hidden">Book</span>
+                <span className="inline-block max-w-[40vw] truncate align-bottom sm:hidden">Book</span>
                 <span className="hidden sm:inline">Book a Demo</span>
               </Link>
             </div>

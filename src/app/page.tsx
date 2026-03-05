@@ -11,7 +11,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative z-10 grid grid-cols-1 items-center gap-10 md:grid-cols-2">
           <div>
-          <p className="inline-block max-w-full rounded-full border border-neutral-800 bg-neutral-900/60 px-3 py-1 text-xs leading-relaxed text-neutral-300">
+          <p className="block w-fit max-w-full rounded-full border border-neutral-800 bg-neutral-900/60 px-3 py-1 text-xs leading-relaxed text-neutral-300">
             Built for small businesses who want more calls, more bookings, and more trust.
           </p>
 
@@ -247,18 +247,18 @@ export default function Home() {
           Book a demo and we’ll show you exactly how the receptionist handles calls and how the social manager produces posts.
         </p>
         <div className="mt-7 flex flex-wrap justify-center gap-3">
-          <Link
-            href="/book"
-            className="rounded-md bg-amber-400 px-6 py-3 text-sm font-semibold text-neutral-950 hover:bg-amber-300 transition-colors"
-          >
-            Book a Demo
-          </Link>
-          <Link
-            href="/contact"
-            className="rounded-md border border-neutral-800 px-6 py-3 text-sm font-semibold text-neutral-100 hover:border-neutral-700 transition-colors"
-          >
-            Contact
-          </Link>
+            <Link
+              href="/book"
+              className="rounded-md bg-amber-400 px-4 py-3 text-sm font-semibold text-neutral-950 hover:bg-amber-300 transition-colors sm:px-6"
+            >
+              Book a Demo
+            </Link>
+            <Link
+              href="/contact"
+              className="rounded-md border border-neutral-800 px-4 py-3 text-sm font-semibold text-neutral-100 hover:border-neutral-700 transition-colors sm:px-6"
+            >
+              Contact
+            </Link>
         </div>
       </section>
     </main>
