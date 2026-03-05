@@ -269,7 +269,7 @@ export default function ContactPage() {
             <button
               type="submit"
               disabled={submitted || isSubmitting}
-              className="w-fit rounded-md bg-amber-400 px-5 py-3 text-sm font-semibold text-neutral-950 transition-colors hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-70"
+              className="w-full rounded-md bg-amber-400 px-5 py-3 text-sm font-semibold text-neutral-950 transition-colors hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-70 sm:w-fit"
             >
               {submitted ? "Submitted" : isSubmitting ? "Sending..." : "Send Message"}
             </button>
