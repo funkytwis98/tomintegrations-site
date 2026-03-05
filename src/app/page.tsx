@@ -108,6 +108,18 @@ export default function Home() {
                 />
               </div>
             )}
+            {card.title === "Combined Package" && (
+              <div className="mb-4 overflow-hidden rounded-xl border border-neutral-800 bg-black/40">
+                <Image
+                  src="/images/combined-package-widget.png"
+                  alt="Combined calls and content dashboard widget"
+                  width={1200}
+                  height={800}
+                  className="h-auto w-full"
+                  priority={false}
+                />
+              </div>
+            )}
             <h3 className="text-lg font-semibold">
               <span className="text-amber-400">●</span> {card.title}
             </h3>
