@@ -100,12 +100,14 @@ export default function Home() {
             )}
             {card.title === "AI Social Media Manager" && (
               <div className="mb-4 overflow-hidden rounded-xl border border-neutral-800 bg-black/40">
-                <Image
-                  src="/images/ai-social-widget.png"
-                  alt="Social media manager workflow widget"
-                  width={1200}
-                  height={800}
+                <video
                   className="h-auto w-full"
+                  src="/videos/ai-social.mp4"
+                  muted
+                  playsInline
+                  loop
+                  autoPlay
+                  preload="metadata"
                 />
               </div>
             )}
