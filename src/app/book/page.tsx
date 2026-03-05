@@ -203,32 +203,34 @@ export default function BookPage() {
         )}
 
         {!slotsLoading && !slotsError && slots.length > 0 && (
-          <div className="mt-5 max-h-none space-y-5 overflow-visible pr-1 md:max-h-[30rem] md:overflow-y-auto">
+          <div className="mt-5 space-y-5">
             {groupedSlots.map((group) => (
               <div key={group.dayLabel}>
                 <p className="text-sm font-semibold text-neutral-200">{group.dayLabel}</p>
-                <div className="mt-3 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible sm:pb-0">
-                  {group.items.map((slot) => {
-                    const isSelected = selectedSlot?.startISO === slot.startISO;
-                    return (
-                      <button
-                        key={slot.startISO}
-                        type="button"
-                        onClick={() => {
-                          setSelectedSlot(slot);
-                          setErrors((prev) => ({ ...prev, slot: undefined }));
-                          setSuccessMessage(null);
-                        }}
-                        className={`shrink-0 whitespace-nowrap rounded-md border px-3 py-2 text-left text-sm transition-colors ${
-                          isSelected
-                            ? "border-amber-400 bg-amber-400/10 text-amber-200"
-                            : "border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-500"
-                        }`}
-                      >
-                        {slot.timeLabel ?? slot.display}
-                      </button>
-                    );
-                  })}
+                <div className="mt-3 max-h-56 overflow-y-auto pr-1 md:max-h-none md:overflow-visible">
+                  <div className="grid grid-cols-2 gap-2 md:grid-cols-1">
+                    {group.items.map((slot) => {
+                      const isSelected = selectedSlot?.startISO === slot.startISO;
+                      return (
+                        <button
+                          key={slot.startISO}
+                          type="button"
+                          onClick={() => {
+                            setSelectedSlot(slot);
+                            setErrors((prev) => ({ ...prev, slot: undefined }));
+                            setSuccessMessage(null);
+                          }}
+                          className={`h-11 w-full rounded-md border px-3 py-2 text-left text-sm transition-colors ${
+                            isSelected
+                              ? "border-amber-400 bg-amber-400/10 text-amber-200"
+                              : "border-neutral-700 bg-neutral-950 text-neutral-200 hover:border-neutral-500"
+                          }`}
+                        >
+                          {slot.timeLabel ?? slot.display}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             ))}
