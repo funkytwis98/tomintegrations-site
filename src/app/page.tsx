@@ -1,8 +1,33 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import HeroBackgroundCanvas from "@/src/components/HeroBackgroundCanvas";
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
+  const [demoOpen, setDemoOpen] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  const closeDemo = () => {
+    setDemoOpen(false);
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
+
+  useEffect(() => {
+    if (!demoOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeDemo();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [demoOpen]);
+
   return (
     <main className="space-y-12 sm:space-y-16">
       {/* HERO */}
@@ -37,6 +62,13 @@ export default function Home() {
             >
               View Pricing
             </Link>
+            <button
+              type="button"
+              onClick={() => setDemoOpen(true)}
+              className="rounded-md border border-neutral-800 px-5 py-3 text-sm font-semibold text-neutral-100 hover:border-neutral-700 transition-colors"
+            >
+              Watch Demo
+            </button>
           </div>
 
           <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-neutral-400">
@@ -260,6 +292,50 @@ export default function Home() {
             </Link>
         </div>
       </section>
+
+      {demoOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+          onClick={closeDemo}
+        >
+          <div
+            className="w-full max-w-3xl overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Demo video"
+          >
+            <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-3">
+              <div className="text-sm font-medium text-neutral-200">Quick Demo</div>
+              <button
+                type="button"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-neutral-300 hover:bg-neutral-900/60"
+                onClick={closeDemo}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-3 sm:p-4">
+              <div className="overflow-hidden rounded-xl border border-neutral-800 bg-black">
+                <video
+                  ref={videoRef}
+                  className="h-auto w-full max-h-[70vh] object-contain"
+                  src="/videos/home-demo.mp4"
+                  muted
+                  playsInline
+                  loop
+                  autoPlay
+                  controls
+                  preload="metadata"
+                />
+              </div>
+              <div className="mt-3 text-xs text-neutral-400">Tip: tap fullscreen on mobile for best viewing.</div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
