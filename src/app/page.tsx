@@ -81,7 +81,7 @@ export default function Home() {
           <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-black/40">
             <video
               className="h-auto w-full max-h-[320px] object-contain sm:max-h-[420px]"
-              src="/videos/home-demo.mp4"
+              src="/videos/home-demo.mp4?v=9fa9438"
               muted
               playsInline
               loop
@@ -322,7 +322,7 @@ export default function Home() {
                 <video
                   ref={videoRef}
                   className="h-auto w-full max-h-[70vh] object-contain"
-                  src="/videos/home-demo.mp4"
+                  src="/videos/home-demo.mp4?v=9fa9438"
                   muted
                   playsInline
                   loop
