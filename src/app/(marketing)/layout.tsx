@@ -37,10 +37,11 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             <MobileMenu />
             <Link
               href="/book"
+              aria-label="Book a Demo"
               className="whitespace-nowrap rounded-md bg-amber-400 px-2.5 py-2 text-xs font-semibold text-neutral-950 transition-colors hover:bg-amber-300 sm:px-4 sm:text-sm"
             >
-              <span className="inline-block max-w-[40vw] truncate align-bottom sm:hidden">Book</span>
-              <span className="hidden sm:inline">Book a Demo</span>
+              <span aria-hidden="true" className="inline-block max-w-[40vw] truncate align-bottom sm:hidden">Book</span>
+              <span aria-hidden="true" className="hidden sm:inline">Book a Demo</span>
             </Link>
           </div>
         </div>

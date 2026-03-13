@@ -39,7 +39,12 @@ export async function POST(req: NextRequest) {
     const kbEntries = kbRes.data ?? [];
     const playbookEntries = playbookRes.data ?? [];
 
-    let generalPrompt = `CRITICAL BEHAVIOR RULES - FOLLOW THESE ABOVE ALL ELSE:
+    let generalPrompt = `WHEN YOU DON'T KNOW SOMETHING:
+Never guess. Never make up an answer. If a caller asks something you are not 100% sure about, say:
+"That's a great question — I'd have to check with Tom to confirm. Can I get your name and number so he can follow up with you?"
+Then collect their name and phone number if not already collected.
+
+CRITICAL BEHAVIOR RULES - FOLLOW THESE ABOVE ALL ELSE:
 - Respond in 1 sentence maximum. No exceptions.
 - Ask ONE question per turn. Never combine questions.
 - Do not mention promotions, deals, or extra info unless the caller asks.
@@ -74,6 +79,7 @@ export async function POST(req: NextRequest) {
     // Build Retell update payload
     const updatePayload: Record<string, unknown> = {
       webhook_url: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://yourbrand-site-dun.vercel.app"}/api/webhooks/retell`,
+      interruption_sensitivity: 0.6,
     };
 
     if (agentConfig?.agent_name) updatePayload.agent_name = agentConfig.agent_name;

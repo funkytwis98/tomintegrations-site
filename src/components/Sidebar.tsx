@@ -7,6 +7,7 @@ import { supabase } from "@/src/lib/supabase";
 
 const links = [
   { href: "", label: "Overview", icon: "📊" },
+  { href: "/notifications", label: "Notifications", icon: "🔔" },
   { href: "/agent", label: "Voice Agent", icon: "🤖" },
   { href: "/leads", label: "Leads", icon: "👤" },
   { href: "/calls", label: "Calls", icon: "📞" },
@@ -19,6 +20,7 @@ export default function Sidebar({ clientId }: { clientId: string }) {
   const pathname = usePathname();
   const base = `/clients/${clientId}`;
   const [pendingCount, setPendingCount] = useState(0);
+  const [unreadNotifs, setUnreadNotifs] = useState(0);
 
   useEffect(() => {
     supabase
@@ -27,6 +29,14 @@ export default function Sidebar({ clientId }: { clientId: string }) {
       .eq("client_id", clientId)
       .eq("status", "pending")
       .then(({ count }) => setPendingCount(count ?? 0));
+
+    supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("client_id", clientId)
+      .eq("channel", "dashboard")
+      .eq("status", "sent")
+      .then(({ count }) => setUnreadNotifs(count ?? 0));
   }, [clientId]);
 
   return (
@@ -56,6 +66,11 @@ export default function Sidebar({ clientId }: { clientId: string }) {
             >
               <span className="text-base">{link.icon}</span>
               {link.label}
+              {link.href === "/notifications" && unreadNotifs > 0 && (
+                <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
+                  {unreadNotifs}
+                </span>
+              )}
               {link.href === "/learn" && pendingCount > 0 && (
                 <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
                   {pendingCount}

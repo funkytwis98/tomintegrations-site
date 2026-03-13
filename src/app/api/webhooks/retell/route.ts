@@ -13,6 +13,9 @@ const DEFLECTION_PATTERNS = [
   "i'm not able to",
   "i don't have details",
   "let me have tom get back to you",
+  "i'd have to check with tom",
+  "i would have to check with tom",
+  "let me check with tom",
 ];
 
 interface TranscriptTurn {
@@ -125,6 +128,19 @@ export async function POST(req: NextRequest) {
     }));
 
     await supabase.from("unanswered_questions").insert(rows);
+
+    // Insert dashboard notifications for each deflection
+    const notificationRows = unanswered.map((q) => ({
+      client_id: call.client_id,
+      call_id: call.id,
+      type: "knowledge_base_opportunity",
+      channel: "dashboard",
+      message: `Knowledge Base Update Opportunity: Sarah didn't know how to answer: "${q.question}"`,
+      status: "sent",
+    }));
+
+    await supabase.from("notifications").insert(notificationRows);
+    console.log("[retell-webhook] inserted", unanswered.length, "notifications for client:", call.client_id);
 
     return NextResponse.json({
       ok: true,
