@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 
 import { BookingConfigError, getBookingConfig, getMissingBookingEnvVarsForHealth } from "@/src/lib/bookingConfig";
+import { getCommandCenterClient } from "@/src/lib/commandCenterSupabase";
 import { createBooking, ensureBookingsTable, listOverlappingBookings } from "@/src/lib/bookingsDb";
 import { buildBookingInviteIcs } from "@/src/lib/ics";
 
@@ -369,6 +370,31 @@ export async function POST(request: Request) {
 
     if (!bookingId) {
       return Response.json({ ok: false, error: "Could not create booking." }, { status: 500 });
+    }
+
+    // Fire-and-forget: insert into Command Center demo_requests table
+    try {
+      const ccClient = getCommandCenterClient();
+      ccClient
+        .from("demo_requests")
+        .insert({
+          name: fullName,
+          business_name: businessName,
+          email,
+          phone,
+          interest,
+          notes,
+          preferred_time: slotStartISO,
+          status: "pending",
+        })
+        .then(({ error: ccError }) => {
+          if (ccError) {
+            console.error("[booking] command center insert failed:", ccError.message);
+          }
+        });
+    } catch (ccErr) {
+      const msg = ccErr instanceof Error ? ccErr.message : "Unknown error";
+      console.error("[booking] command center insert failed:", msg);
     }
 
     const slotDisplay = new Intl.DateTimeFormat("en-US", {
