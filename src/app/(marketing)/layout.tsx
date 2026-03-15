@@ -18,7 +18,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-4 sm:px-6">
           <Link href="/" className="text-lg font-semibold tracking-tight">
             <span className="text-neutral-100">Tom</span>
-            <span className="text-amber-400"> Agency</span>
+            <span className="text-amber-400"> Integrations</span>
           </Link>
 
           <nav className="hidden gap-6 text-sm text-neutral-300 md:flex">
@@ -51,7 +51,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
 
       <footer className="border-t border-neutral-800">
         <div className="mx-auto max-w-6xl px-4 py-10 text-sm text-neutral-400 sm:px-6">
-          © {new Date().getFullYear()} Tom Agency. All rights reserved.
+          © {new Date().getFullYear()} Tom Integrations. All rights reserved.
         </div>
       </footer>
     </>

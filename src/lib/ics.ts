@@ -25,10 +25,10 @@ export function buildBookingInviteIcs(input: BookingInviteInput): string {
   const start = new Date(input.slotStartISO);
   const end = new Date(input.slotEndISO);
 
-  const uid = `${input.bookingId}@tomagency.local`;
+  const uid = `${input.bookingId}@tomintegrations.local`;
   const description = escapeIcsText(
     [
-      "Tom Agency demo booking",
+      "Tom Integrations demo booking",
       `Business: ${input.businessName}`,
       `Interest: ${input.interest}`,
       "Need to reschedule? Reply to your confirmation email.",
@@ -37,7 +37,7 @@ export function buildBookingInviteIcs(input: BookingInviteInput): string {
 
   const lines = [
     "BEGIN:VCALENDAR",
-    "PRODID:-//Tom Agency//Booking//EN",
+    "PRODID:-//Tom Integrations//Booking//EN",
     "VERSION:2.0",
     "CALSCALE:GREGORIAN",
     "METHOD:REQUEST",
@@ -46,7 +46,7 @@ export function buildBookingInviteIcs(input: BookingInviteInput): string {
     `DTSTAMP:${toIcsUtcTimestamp(now)}`,
     `DTSTART:${toIcsUtcTimestamp(start)}`,
     `DTEND:${toIcsUtcTimestamp(end)}`,
-    "SUMMARY:Tom Agency Demo",
+    "SUMMARY:Tom Integrations Demo",
     `DESCRIPTION:${description}`,
     "END:VEVENT",
     "END:VCALENDAR",

@@ -90,7 +90,7 @@ function extractEmailAddress(value: string): string {
 
 function normalizeFromEmail(value: string): string {
   const email = extractEmailAddress(value);
-  return `Tom Agency <${email}>`;
+  return `Tom Integrations <${email}>`;
 }
 
 function buildInternalBookingEmail(input: InternalBookingEmailInput) {
@@ -176,7 +176,7 @@ function buildCustomerBookingEmail(input: CustomerBookingEmailInput) {
     `When: ${input.slotDisplay}`,
     `Business: ${input.businessName}`,
     `Interest: ${input.interest}`,
-    "Add to Calendar: open the attached tom-agency-demo.ics file.",
+    "Add to Calendar: open the attached tom-integrations-demo.ics file.",
     "",
     `View details: ${input.detailsUrl}`,
     "",
@@ -189,7 +189,7 @@ function buildCustomerBookingEmail(input: CustomerBookingEmailInput) {
         <td align="center" style="padding:20px 12px;font-family:Arial,Helvetica,sans-serif;color:#111111;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:640px;border-collapse:separate;background:#ffffff;border:1px solid #e5e5e5;">
             <tr>
-              <td style="padding:20px 20px 8px 20px;font-size:22px;font-weight:700;line-height:1.25;">Tom Agency booking confirmed</td>
+              <td style="padding:20px 20px 8px 20px;font-size:22px;font-weight:700;line-height:1.25;">Tom Integrations booking confirmed</td>
             </tr>
             <tr>
               <td style="padding:0 20px 8px 20px;font-size:16px;line-height:1.45;">Hi ${safeFullName},</td>
@@ -217,7 +217,7 @@ function buildCustomerBookingEmail(input: CustomerBookingEmailInput) {
             </tr>
             <tr>
               <td style="padding:0 20px 12px 20px;font-size:14px;color:#333333;line-height:1.45;">
-                Add to Calendar: open the attached <strong>tom-agency-demo.ics</strong> file.
+                Add to Calendar: open the attached <strong>tom-integrations-demo.ics</strong> file.
               </td>
             </tr>
             <tr>
@@ -382,7 +382,7 @@ export async function POST(request: Request) {
     }).format(new Date(slotStartISO));
 
     const resend = new Resend(apiKey);
-    const customerSubject = "Tom Agency booking confirmed";
+    const customerSubject = "Tom Integrations booking confirmed";
     const detailsUrl = process.env.SITE_URL ?? "https://yourbrand-site-dun.vercel.app";
     const normalizedFromEmail = normalizeFromEmail(fromEmail);
     const rescheduleEmail = extractEmailAddress(normalizedFromEmail);
@@ -431,7 +431,7 @@ export async function POST(request: Request) {
         text: customerEmail.text,
         attachments: [
           {
-            filename: "tom-agency-demo.ics",
+            filename: "tom-integrations-demo.ics",
             content: Buffer.from(customerInviteIcs, "utf8").toString("base64"),
             contentType: "text/calendar; charset=utf-8; method=REQUEST",
           },

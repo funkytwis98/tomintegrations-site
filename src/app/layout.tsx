@@ -3,7 +3,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Tom Agency",
+  title: "Tom Integrations",
   description: "AI Receptionist and AI Social Media Manager for small businesses.",
 };
 
