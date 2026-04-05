@@ -13,6 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen overflow-x-hidden bg-neutral-950 text-neutral-100 antialiased">
         <Toaster theme="dark" richColors position="top-right" />
         {children}
+        <script src="/tracking.js" defer />
       </body>
     </html>
   );

@@ -98,17 +98,13 @@ export async function POST(request: Request) {
     const interest = String(payload.interest).trim();
     const message = typeof payload.message === "string" ? payload.message.trim() : "";
 
-    const { error } = await supabase.from("inbox_items").insert({
-      name: fullName,
-      business: businessName,
+    const { error } = await supabase.from("site_form_submissions").insert({
+      full_name: fullName,
+      business_name: businessName,
       email,
       phone,
       interest,
       message: message || null,
-      type: "demo_request",
-      source: "website",
-      status: "new",
-      created_at: new Date().toISOString(),
     });
 
     if (error) {
