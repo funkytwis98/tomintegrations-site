@@ -9,29 +9,20 @@
   --color-white: #ffffff;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
   font-family: "DM Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
   color: #1d1d1f;
   background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-weight: 400;
 }
 
-/* Scroll-triggered fade up */
+/* ── Scroll-triggered fade up ───────────────────────────────────────── */
 .fade-up {
   opacity: 0;
   transform: translateY(36px);
@@ -43,12 +34,61 @@ h6 {
   transform: translateY(0);
 }
 
-/* Smooth scroll */
+/* Stagger children */
+.fade-up-delay-1 { transition-delay: 0.1s; }
+.fade-up-delay-2 { transition-delay: 0.2s; }
+.fade-up-delay-3 { transition-delay: 0.3s; }
+
+/* ── Pill button base ───────────────────────────────────────────────── */
+.pill {
+  display: inline-block;
+  border-radius: 980px;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  line-height: 1;
+  padding: 14px 32px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.2s ease;
+}
+.pill:hover {
+  transform: scale(1.03);
+}
+.pill:active {
+  transform: scale(0.98);
+}
+.pill-white {
+  background: #fff;
+  color: #111;
+}
+.pill-white:hover {
+  box-shadow: 0 4px 24px rgba(255, 255, 255, 0.2);
+}
+.pill-dark {
+  background: #1d1d1f;
+  color: #fff;
+}
+.pill-dark:hover {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+}
+.pill-ghost {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.pill-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Smooth scroll ──────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
 }
 
-/* Selection */
+/* ── Selection ──────────────────────────────────────────────────────── */
 ::selection {
   background: #d2d2d7;
   color: #1d1d1f;

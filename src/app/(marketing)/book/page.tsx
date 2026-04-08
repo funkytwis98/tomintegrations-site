@@ -46,39 +46,6 @@ function groupSlotsByDay(slots: Slot[]): Array<{ dayLabel: string; items: Slot[]
   return Array.from(groups.entries()).map(([dayLabel, items]) => ({ dayLabel, items }));
 }
 
-/* ── Nav (same as homepage) ─────────────────────────────────────────── */
-function Nav() {
-  return (
-    <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}>
-      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="text-white text-sm tracking-tight" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
-          Tom Integrations
-        </Link>
-        <Link
-          href="/book"
-          className="text-white text-sm px-5 py-2 rounded-[980px] border border-white/25 hover:bg-white/10 transition-colors"
-          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, background: "rgba(255,255,255,0.08)" }}
-        >
-          Book a call
-        </Link>
-      </div>
-    </nav>
-  );
-}
-
-/* ── Footer ─────────────────────────────────────────────────────────── */
-function SiteFooter() {
-  return (
-    <footer className="py-8" style={{ background: "#111", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-      <div className="max-w-6xl mx-auto px-6 text-center">
-        <p className="text-sm" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.25)" }}>
-          &copy; 2026 Tom Integrations. Chattanooga, TN.
-        </p>
-      </div>
-    </footer>
-  );
-}
-
 export default function BookPage() {
   const [slots, setSlots] = useState<Slot[]>([]);
   const [slotsLoading, setSlotsLoading] = useState(true);
@@ -174,40 +141,77 @@ export default function BookPage() {
     }
   };
 
-  const inputClass = "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition focus:border-white/30 focus:bg-white/[0.07] disabled:opacity-50";
+  const inputCls =
+    "w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 py-3.5 text-[15px] text-white/90 outline-none transition-all duration-200 placeholder:text-white/20 focus:border-white/20 focus:bg-white/[0.06] disabled:opacity-40";
 
   return (
-    <div style={{ background: "#111", minHeight: "100vh" }}>
-      <Nav />
+    <div className="min-h-dvh bg-[#111]">
+      {/* Nav */}
+      <nav
+        className="fixed top-0 left-0 right-0 z-50"
+        style={{
+          background: "rgba(0,0,0,0.4)",
+          backdropFilter: "saturate(180%) blur(20px)",
+          WebkitBackdropFilter: "saturate(180%) blur(20px)",
+        }}
+      >
+        <div className="max-w-[980px] mx-auto px-6 h-12 flex items-center justify-between">
+          <Link href="/" className="text-white/90 text-[13px] tracking-tight font-medium">
+            Tom Integrations
+          </Link>
+          <Link href="/book" className="pill pill-ghost !text-[13px] !py-2 !px-5">
+            Book a call
+          </Link>
+        </div>
+      </nav>
 
-      <div className="pt-28 pb-12 px-6 max-w-xl mx-auto text-center">
-        <p className="text-sm uppercase tracking-[0.2em] mb-4" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.4)" }}>
-          Let&apos;s talk
+      {/* Header */}
+      <div className="pt-32 pb-6 px-6 max-w-[520px] mx-auto text-center">
+        <p className="text-[11px] uppercase tracking-[0.25em] text-white/30 font-medium mb-5">
+          Let&rsquo;s talk
         </p>
-        <h1 className="text-4xl sm:text-5xl text-white mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+        <h1
+          className="text-[clamp(2.2rem,6vw,3.2rem)] leading-[1.08] tracking-[-0.02em] text-white mb-4"
+          style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+        >
           Book a call with Tom.
         </h1>
-        <p className="text-base mb-12" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.5)" }}>
-          Free 10-minute demo. See the AI working on your business — no commitment.
+        <p className="text-[16px] leading-relaxed text-white/40 mb-14">
+          Free 10-minute demo. See the AI working on your business&nbsp;&mdash; no commitment.
         </p>
+      </div>
 
-        {/* Booking form */}
-        <div className="rounded-2xl p-6 sm:p-8 text-left" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-
+      {/* Form card */}
+      <div className="px-6 pb-20 max-w-[520px] mx-auto">
+        <div
+          className="rounded-[24px] p-7 sm:p-9"
+          style={{
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(255,255,255,0.06)",
+            boxShadow: "0 32px 80px -24px rgba(0,0,0,0.4)",
+          }}
+        >
           {/* Time picker */}
-          <h2 className="text-lg text-white mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+          <h2
+            className="text-[17px] text-white/80 mb-5"
+            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+          >
             Choose a time
           </h2>
 
-          {slotsLoading && <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>Loading available slots...</p>}
-          {slotsError && <p className="text-sm text-red-400">{slotsError}</p>}
+          {slotsLoading && (
+            <p className="text-[14px] text-white/30 mb-6">Loading available slots&hellip;</p>
+          )}
+          {slotsError && (
+            <p className="text-[14px] text-red-400/80 mb-6">{slotsError}</p>
+          )}
           {!slotsLoading && !slotsError && slots.length === 0 && (
-            <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>No slots are currently open. Please check back soon.</p>
+            <p className="text-[14px] text-white/30 mb-6">No slots are currently open. Please check back soon.</p>
           )}
 
           {!slotsLoading && !slotsError && slots.length > 0 && activeGroup && (
-            <div className="space-y-3 mb-6">
-              <div className="flex gap-2 overflow-x-auto pb-1">
+            <div className="space-y-3 mb-8">
+              <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
                 {groupedSlots.map((group) => {
                   const active = group.dayLabel === activeGroup.dayLabel;
                   return (
@@ -215,13 +219,13 @@ export default function BookPage() {
                       key={group.dayLabel}
                       type="button"
                       onClick={() => { setSelectedDayLabel(group.dayLabel); setSelectedSlot(null); setSuccessMessage(null); }}
-                      className="shrink-0 px-4 py-2 rounded-[980px] text-sm transition-colors"
+                      className="shrink-0 px-4 py-2 rounded-full text-[13px] font-medium transition-all duration-200"
                       style={{
-                        fontFamily: "'DM Sans', sans-serif",
-                        fontWeight: 500,
-                        background: active ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.05)",
-                        color: active ? "#fff" : "rgba(255,255,255,0.5)",
-                        border: active ? "1px solid rgba(255,255,255,0.25)" : "1px solid rgba(255,255,255,0.08)",
+                        background: active ? "rgba(255,255,255,0.12)" : "transparent",
+                        color: active ? "#fff" : "rgba(255,255,255,0.4)",
+                        border: active
+                          ? "1px solid rgba(255,255,255,0.2)"
+                          : "1px solid rgba(255,255,255,0.06)",
                       }}
                     >
                       {group.dayLabel}
@@ -229,7 +233,7 @@ export default function BookPage() {
                   );
                 })}
               </div>
-              <div className="max-h-48 overflow-y-auto space-y-2">
+              <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1">
                 {activeGroup.items.map((slot) => {
                   const selected = selectedSlot?.startISO === slot.startISO;
                   return (
@@ -237,12 +241,13 @@ export default function BookPage() {
                       key={slot.startISO}
                       type="button"
                       onClick={() => { setSelectedSlot(slot); setErrors((p) => ({ ...p, slot: undefined })); setSuccessMessage(null); }}
-                      className="w-full px-4 py-2.5 rounded-xl text-left text-sm transition-colors"
+                      className="w-full px-4 py-3 rounded-2xl text-left text-[14px] transition-all duration-200"
                       style={{
-                        fontFamily: "'DM Sans', sans-serif",
-                        background: selected ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.03)",
-                        color: selected ? "#fff" : "rgba(255,255,255,0.6)",
-                        border: selected ? "1px solid rgba(255,255,255,0.3)" : "1px solid rgba(255,255,255,0.06)",
+                        background: selected ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.02)",
+                        color: selected ? "#fff" : "rgba(255,255,255,0.5)",
+                        border: selected
+                          ? "1px solid rgba(255,255,255,0.25)"
+                          : "1px solid rgba(255,255,255,0.04)",
                       }}
                     >
                       {slot.timeLabel ?? slot.display}
@@ -252,69 +257,87 @@ export default function BookPage() {
               </div>
             </div>
           )}
-          {errors.slot && <p className="text-xs text-red-400 mb-4">{errors.slot}</p>}
+          {errors.slot && <p className="text-[12px] text-red-400/80 mb-5">{errors.slot}</p>}
 
-          {/* Form */}
+          {/* Divider */}
+          <div className="h-px bg-white/[0.06] mb-7" />
+
+          {/* Alerts */}
           {successMessage && (
-            <div className="rounded-xl px-4 py-3 text-sm text-white mb-6" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)" }}>
+            <div
+              className="rounded-2xl px-5 py-4 text-[14px] text-white/80 mb-6"
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}
+            >
               {successMessage}
             </div>
           )}
           {submitError && (
-            <div className="rounded-xl px-4 py-3 text-sm text-red-300 mb-6" style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}>
+            <div
+              className="rounded-2xl px-5 py-4 text-[14px] text-red-300/80 mb-6"
+              style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)" }}
+            >
               {submitError}
             </div>
           )}
 
+          {/* Form fields */}
           <form className="space-y-4" onSubmit={onSubmit} noValidate>
             <div>
-              <label className="block text-sm mb-1.5" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.6)" }}>Full name</label>
-              <input type="text" value={values.fullName} onChange={(e) => setField("fullName", e.target.value)} disabled={isSubmitting || Boolean(successMessage)} className={inputClass} />
-              {errors.fullName && <p className="text-xs text-red-400 mt-1">{errors.fullName}</p>}
+              <label className="block text-[13px] text-white/40 mb-2">Full name</label>
+              <input type="text" value={values.fullName} onChange={(e) => setField("fullName", e.target.value)} disabled={isSubmitting || Boolean(successMessage)} className={inputCls} />
+              {errors.fullName && <p className="text-[12px] text-red-400/80 mt-1.5">{errors.fullName}</p>}
             </div>
             <div>
-              <label className="block text-sm mb-1.5" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.6)" }}>Business name</label>
-              <input type="text" value={values.businessName} onChange={(e) => setField("businessName", e.target.value)} disabled={isSubmitting || Boolean(successMessage)} className={inputClass} />
-              {errors.businessName && <p className="text-xs text-red-400 mt-1">{errors.businessName}</p>}
+              <label className="block text-[13px] text-white/40 mb-2">Business name</label>
+              <input type="text" value={values.businessName} onChange={(e) => setField("businessName", e.target.value)} disabled={isSubmitting || Boolean(successMessage)} className={inputCls} />
+              {errors.businessName && <p className="text-[12px] text-red-400/80 mt-1.5">{errors.businessName}</p>}
             </div>
             <div>
-              <label className="block text-sm mb-1.5" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.6)" }}>Email</label>
-              <input type="email" value={values.email} onChange={(e) => setField("email", e.target.value)} disabled={isSubmitting || Boolean(successMessage)} className={inputClass} />
-              {errors.email && <p className="text-xs text-red-400 mt-1">{errors.email}</p>}
+              <label className="block text-[13px] text-white/40 mb-2">Email</label>
+              <input type="email" value={values.email} onChange={(e) => setField("email", e.target.value)} disabled={isSubmitting || Boolean(successMessage)} className={inputCls} />
+              {errors.email && <p className="text-[12px] text-red-400/80 mt-1.5">{errors.email}</p>}
             </div>
             <div>
-              <label className="block text-sm mb-1.5" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.6)" }}>Phone</label>
-              <input type="tel" value={values.phone} onChange={(e) => setField("phone", e.target.value)} disabled={isSubmitting || Boolean(successMessage)} className={inputClass} />
-              {errors.phone && <p className="text-xs text-red-400 mt-1">{errors.phone}</p>}
+              <label className="block text-[13px] text-white/40 mb-2">Phone</label>
+              <input type="tel" value={values.phone} onChange={(e) => setField("phone", e.target.value)} disabled={isSubmitting || Boolean(successMessage)} className={inputCls} />
+              {errors.phone && <p className="text-[12px] text-red-400/80 mt-1.5">{errors.phone}</p>}
             </div>
             <div>
-              <label className="block text-sm mb-1.5" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.6)" }}>What you&apos;re interested in</label>
-              <select value={values.interest} onChange={(e) => setField("interest", e.target.value as InterestOption)} disabled={isSubmitting || Boolean(successMessage)} className={inputClass}>
+              <label className="block text-[13px] text-white/40 mb-2">What you&rsquo;re interested in</label>
+              <select value={values.interest} onChange={(e) => setField("interest", e.target.value as InterestOption)} disabled={isSubmitting || Boolean(successMessage)} className={inputCls}>
                 <option value="">Select one</option>
                 <option value="AI Receptionist">AI Receptionist</option>
                 <option value="AI Social Media Manager">AI Social Media Manager</option>
                 <option value="Combined Package">Combined Package</option>
                 <option value="Not sure yet">Not sure yet</option>
               </select>
-              {errors.interest && <p className="text-xs text-red-400 mt-1">{errors.interest}</p>}
+              {errors.interest && <p className="text-[12px] text-red-400/80 mt-1.5">{errors.interest}</p>}
             </div>
             <div>
-              <label className="block text-sm mb-1.5" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.6)" }}>Notes (optional)</label>
-              <textarea rows={3} value={values.notes} onChange={(e) => setField("notes", e.target.value)} disabled={isSubmitting || Boolean(successMessage)} className={inputClass} />
+              <label className="block text-[13px] text-white/40 mb-2">Notes (optional)</label>
+              <textarea rows={3} value={values.notes} onChange={(e) => setField("notes", e.target.value)} disabled={isSubmitting || Boolean(successMessage)} className={inputCls} />
             </div>
-            <button
-              type="submit"
-              disabled={isSubmitting || Boolean(successMessage)}
-              className="w-full py-3 rounded-[980px] text-sm transition-colors disabled:opacity-50"
-              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, background: "#fff", color: "#111" }}
-            >
-              {isSubmitting ? "Booking..." : successMessage ? "Booked" : "Confirm booking"}
-            </button>
+            <div className="pt-3">
+              <button
+                type="submit"
+                disabled={isSubmitting || Boolean(successMessage)}
+                className="pill pill-white w-full text-center !py-3.5 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? "Booking\u2026" : successMessage ? "Booked" : "Confirm booking"}
+              </button>
+            </div>
           </form>
         </div>
       </div>
 
-      <SiteFooter />
+      {/* Footer */}
+      <footer className="py-7 bg-[#111]" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="max-w-[980px] mx-auto px-6 text-center">
+          <p className="text-[12px] text-white/20 tracking-wide">
+            &copy; 2026 Tom Integrations. Chattanooga, TN.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

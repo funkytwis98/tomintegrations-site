@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 
+/* ── Scroll reveal hook ─────────────────────────────────────────────── */
 function useScrollReveal() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -18,7 +19,7 @@ function useScrollReveal() {
           }
         });
       },
-      { threshold: 0.15 }
+      { threshold: 0.1 }
     );
     targets.forEach((t) => observer.observe(t));
     return () => observer.disconnect();
@@ -26,19 +27,24 @@ function useScrollReveal() {
   return ref;
 }
 
-/* ── Nav ────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   NAV
+   ═══════════════════════════════════════════════════════════════════════ */
 function Nav() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}>
-      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="text-white text-sm tracking-tight" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
+    <nav
+      className="fixed top-0 left-0 right-0 z-50"
+      style={{
+        background: "rgba(0,0,0,0.4)",
+        backdropFilter: "saturate(180%) blur(20px)",
+        WebkitBackdropFilter: "saturate(180%) blur(20px)",
+      }}
+    >
+      <div className="max-w-[980px] mx-auto px-6 h-12 flex items-center justify-between">
+        <Link href="/" className="text-white/90 text-[13px] tracking-tight font-medium">
           Tom Integrations
         </Link>
-        <Link
-          href="/book"
-          className="text-white text-sm px-5 py-2 rounded-[980px] border border-white/25 hover:bg-white/10 transition-colors"
-          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, background: "rgba(255,255,255,0.08)" }}
-        >
+        <Link href="/book" className="pill pill-ghost !text-[13px] !py-2 !px-5">
           Book a call
         </Link>
       </div>
@@ -46,41 +52,56 @@ function Nav() {
   );
 }
 
-/* ── Hero ───────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════════════════════════ */
 function Hero() {
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden" style={{ background: "#000" }}>
+    <section className="relative h-dvh flex items-center justify-center overflow-hidden bg-black">
+      {/* Video layer */}
       <video
         autoPlay
         muted
         loop
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ opacity: 0.45 }}
+        preload="auto"
+        className="absolute inset-0 w-full h-full object-cover opacity-40"
         src="/videos/home-demo.mp4?v=20cfa3e"
       />
-      <div className="relative z-10 text-center px-6 max-w-3xl mx-auto">
-        <p className="fade-up text-sm uppercase tracking-[0.2em] mb-6" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.5)" }}>
+      {/* Cinematic vignette */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 50% 45%, transparent 0%, rgba(0,0,0,0.65) 100%)",
+        }}
+      />
+      {/* Bottom fade to next section */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-40"
+        style={{
+          background: "linear-gradient(to top, #000 0%, transparent 100%)",
+        }}
+      />
+
+      <div className="relative z-10 text-center px-6 max-w-[680px] mx-auto">
+        <p className="fade-up text-[11px] uppercase tracking-[0.25em] text-white/40 mb-6 font-medium">
           AI for small business
         </p>
-        <h1 className="fade-up text-5xl sm:text-6xl md:text-7xl text-white leading-[1.05] mb-6">
+        <h1 className="fade-up fade-up-delay-1 text-[clamp(2.8rem,8vw,5.5rem)] text-white leading-[1.02] tracking-[-0.02em] mb-7">
           Never miss
           <br />
           another call.
         </h1>
-        <p className="fade-up text-lg sm:text-xl max-w-xl mx-auto mb-10" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.6)" }}>
+        <p className="fade-up fade-up-delay-2 text-[17px] sm:text-[19px] leading-relaxed text-white/50 max-w-[480px] mx-auto mb-12">
           Your AI receptionist answers every call, captures every lead, and
-          books the job — so you don&apos;t have to.
+          books the job&nbsp;&mdash; so you don&rsquo;t have to.
         </p>
-        <div className="fade-up">
-          <Link
-            href="/book"
-            className="inline-block bg-white text-[#111] text-base px-8 py-3.5 rounded-[980px] hover:bg-white/90 transition-colors"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}
-          >
+        <div className="fade-up fade-up-delay-3">
+          <Link href="/book" className="pill pill-white">
             Book a call with Tom
           </Link>
-          <p className="text-sm mt-4" style={{ color: "rgba(255,255,255,0.35)" }}>
+          <p className="text-[13px] text-white/25 mt-5 tracking-wide">
             Free 10-minute demo. No commitment.
           </p>
         </div>
@@ -89,55 +110,69 @@ function Hero() {
   );
 }
 
-/* ── Problem ────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   PROBLEM
+   ═══════════════════════════════════════════════════════════════════════ */
 function Problem() {
   return (
-    <section className="py-24 sm:py-32" style={{ background: "#f5f5f7" }}>
-      <div className="max-w-3xl mx-auto px-6 text-center">
-        <p className="fade-up text-7xl sm:text-[120px] leading-none text-[#1d1d1f] mb-4">
+    <section className="py-28 sm:py-40 bg-[#f5f5f7]">
+      <div className="max-w-[680px] mx-auto px-6 text-center">
+        <p className="fade-up text-[clamp(4.5rem,15vw,9rem)] leading-[0.9] tracking-[-0.03em] text-[#1d1d1f]">
           62%
         </p>
-        <p className="fade-up text-2xl sm:text-3xl text-[#1d1d1f] mb-6" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
-          of callers won&apos;t leave a voicemail.
+        <p className="fade-up fade-up-delay-1 text-[22px] sm:text-[28px] text-[#1d1d1f] font-medium mt-3 mb-8">
+          of callers won&rsquo;t leave a voicemail.
         </p>
-        <p className="fade-up text-lg leading-relaxed max-w-xl mx-auto" style={{ fontFamily: "'DM Sans', sans-serif", color: "#86868b" }}>
-          You&apos;re on the job site. On another line. Meanwhile, new customers
+        <p className="fade-up fade-up-delay-2 text-[17px] leading-[1.65] text-[#86868b] max-w-[520px] mx-auto">
+          You&rsquo;re on the job site. On another line. Meanwhile, new customers
           call, hang up, and call your competitor. Every missed call is money
-          you&apos;ll never see.
+          you&rsquo;ll never see.
         </p>
       </div>
     </section>
   );
 }
 
-/* ── Services ───────────────────────────────────────────────────────── */
-interface ServiceRowProps {
+/* ═══════════════════════════════════════════════════════════════════════
+   SERVICES
+   ═══════════════════════════════════════════════════════════════════════ */
+function ServiceRow({
+  title,
+  price,
+  description,
+  videoSrc,
+  reverse,
+}: {
   title: string;
   price: string;
   description: string;
   videoSrc: string;
   reverse?: boolean;
-}
-
-function ServiceRow({ title, price, description, videoSrc, reverse }: ServiceRowProps) {
+}) {
   return (
-    <div className={`fade-up grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center ${reverse ? "md:[direction:rtl]" : ""}`}>
-      <div className={reverse ? "md:[direction:ltr]" : ""}>
-        <p className="text-sm uppercase tracking-wider mb-2" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, color: "#86868b" }}>
+    <div className="fade-up grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center">
+      <div className={reverse ? "md:order-2" : ""}>
+        <p className="text-[11px] uppercase tracking-[0.2em] text-[#86868b] font-medium mb-3">
           {price}
         </p>
-        <h3 className="text-3xl sm:text-4xl text-[#1d1d1f] mb-4">{title}</h3>
-        <p className="text-lg leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif", color: "#86868b" }}>
+        <h3 className="text-[32px] sm:text-[40px] leading-[1.1] tracking-[-0.015em] text-[#1d1d1f] mb-5">
+          {title}
+        </h3>
+        <p className="text-[17px] leading-[1.65] text-[#86868b]">
           {description}
         </p>
       </div>
-      <div className={reverse ? "md:[direction:ltr]" : ""}>
-        <div className="rounded-[20px] overflow-hidden" style={{ background: "#000", boxShadow: "0 20px 60px -12px rgba(0,0,0,0.25)" }}>
+      <div className={reverse ? "md:order-1" : ""}>
+        <div
+          className="rounded-[24px] overflow-hidden bg-black"
+          style={{ boxShadow: "0 24px 80px -16px rgba(0,0,0,0.2)" }}
+        >
           <video
             autoPlay
             muted
             loop
             playsInline
+            preload="metadata"
             className="w-full block"
             src={videoSrc}
           />
@@ -149,17 +184,17 @@ function ServiceRow({ title, price, description, videoSrc, reverse }: ServiceRow
 
 function Services() {
   return (
-    <section className="bg-white py-24 sm:py-32">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center mb-20">
-          <h2 className="fade-up text-4xl sm:text-5xl text-[#1d1d1f] mb-4">
+    <section className="py-28 sm:py-40 bg-white">
+      <div className="max-w-[980px] mx-auto px-6">
+        <div className="text-center mb-24 sm:mb-32">
+          <h2 className="fade-up text-[clamp(2rem,5vw,3.2rem)] leading-[1.1] tracking-[-0.02em] text-[#1d1d1f] mb-4">
             One system. Every lead captured.
           </h2>
-          <p className="fade-up text-lg" style={{ fontFamily: "'DM Sans', sans-serif", color: "#86868b" }}>
+          <p className="fade-up fade-up-delay-1 text-[17px] text-[#86868b]">
             Simple tools that work while you work.
           </p>
         </div>
-        <div className="space-y-24 sm:space-y-32">
+        <div className="space-y-28 sm:space-y-40">
           <ServiceRow
             title="AI Receptionist"
             price="$99 / mo"
@@ -185,7 +220,9 @@ function Services() {
   );
 }
 
-/* ── How It Works ───────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   HOW IT WORKS
+   ═══════════════════════════════════════════════════════════════════════ */
 function HowItWorks() {
   const steps = [
     {
@@ -206,19 +243,21 @@ function HowItWorks() {
   ];
 
   return (
-    <section className="py-24 sm:py-32" style={{ background: "#f5f5f7" }}>
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="fade-up text-4xl sm:text-5xl text-[#1d1d1f] text-center mb-16">
+    <section className="py-28 sm:py-40 bg-[#f5f5f7]">
+      <div className="max-w-[980px] mx-auto px-6">
+        <h2 className="fade-up text-[clamp(2rem,5vw,3.2rem)] leading-[1.1] tracking-[-0.02em] text-[#1d1d1f] text-center mb-20">
           Up and running in days.
         </h2>
-        <div className="fade-up grid grid-cols-1 md:grid-cols-3 gap-12">
-          {steps.map((step) => (
-            <div key={step.num} className="text-center md:text-left">
-              <p className="text-5xl mb-4" style={{ color: "#d2d2d7" }}>
+        <div className="fade-up grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+          {steps.map((step, i) => (
+            <div key={step.num} className={`text-center md:text-left fade-up fade-up-delay-${i + 1}`}>
+              <p className="text-[64px] leading-none tracking-[-0.04em] text-[#d2d2d7] mb-5">
                 {step.num}
               </p>
-              <h3 className="text-2xl text-[#1d1d1f] mb-3">{step.title}</h3>
-              <p className="text-base leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif", color: "#86868b" }}>
+              <h3 className="text-[22px] leading-[1.2] text-[#1d1d1f] mb-3">
+                {step.title}
+              </h3>
+              <p className="text-[15px] leading-[1.6] text-[#86868b]">
                 {step.desc}
               </p>
             </div>
@@ -229,7 +268,9 @@ function HowItWorks() {
   );
 }
 
-/* ── Pricing ────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   PRICING
+   ═══════════════════════════════════════════════════════════════════════ */
 function Pricing() {
   const plans = [
     {
@@ -271,57 +312,50 @@ function Pricing() {
   ];
 
   return (
-    <section className="bg-white py-24 sm:py-32">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="fade-up text-4xl sm:text-5xl text-[#1d1d1f] mb-4">
+    <section className="py-28 sm:py-40 bg-white">
+      <div className="max-w-[980px] mx-auto px-6">
+        <div className="text-center mb-16 sm:mb-20">
+          <h2 className="fade-up text-[clamp(2rem,5vw,3.2rem)] leading-[1.1] tracking-[-0.02em] text-[#1d1d1f] mb-4">
             Simple pricing.
           </h2>
-          <p className="fade-up text-lg" style={{ fontFamily: "'DM Sans', sans-serif", color: "#86868b" }}>
+          <p className="fade-up fade-up-delay-1 text-[17px] text-[#86868b]">
             No contracts. Cancel anytime.
           </p>
         </div>
-        <div className="fade-up grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="fade-up grid grid-cols-1 md:grid-cols-3 gap-5 max-w-[860px] mx-auto">
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className="rounded-2xl p-8"
+              className="rounded-[20px] p-8 sm:p-9 flex flex-col transition-transform duration-300 hover:-translate-y-1"
               style={{
                 background: plan.featured ? "#1d1d1f" : "#f5f5f7",
                 color: plan.featured ? "#fff" : "#1d1d1f",
+                boxShadow: plan.featured
+                  ? "0 32px 80px -16px rgba(0,0,0,0.35)"
+                  : "none",
               }}
             >
               <p
-                className="text-sm uppercase tracking-wider mb-4"
-                style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontWeight: 500,
-                  color: plan.featured ? "rgba(255,255,255,0.5)" : "#86868b",
-                }}
+                className="text-[11px] uppercase tracking-[0.2em] font-medium mb-5"
+                style={{ color: plan.featured ? "rgba(255,255,255,0.45)" : "#86868b" }}
               >
                 {plan.name}
               </p>
-              <p className="text-4xl mb-1">
+              <p className="text-[44px] leading-none tracking-[-0.02em] mb-1">
                 {plan.price}
                 <span
-                  className="text-base"
-                  style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    color: plan.featured ? "rgba(255,255,255,0.4)" : "#86868b",
-                  }}
+                  className="text-[15px] tracking-normal"
+                  style={{ color: plan.featured ? "rgba(255,255,255,0.35)" : "#86868b" }}
                 >
                   {plan.period}
                 </span>
               </p>
-              <ul className="mt-6 space-y-3">
+              <ul className="mt-8 space-y-3.5 flex-1">
                 {plan.features.map((f) => (
                   <li
                     key={f}
-                    className="text-sm"
-                    style={{
-                      fontFamily: "'DM Sans', sans-serif",
-                      color: plan.featured ? "rgba(255,255,255,0.6)" : "#86868b",
-                    }}
+                    className="text-[14px] leading-snug"
+                    style={{ color: plan.featured ? "rgba(255,255,255,0.55)" : "#86868b" }}
                   >
                     {f}
                   </li>
@@ -329,20 +363,16 @@ function Pricing() {
               </ul>
               <Link
                 href="/book"
-                className="mt-8 block text-center text-sm py-3 rounded-[980px] transition-colors"
-                style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontWeight: 500,
-                  background: plan.featured ? "#fff" : "#1d1d1f",
-                  color: plan.featured ? "#1d1d1f" : "#fff",
-                }}
+                className={`pill mt-9 text-center !text-[14px] !py-3 ${
+                  plan.featured ? "pill-white" : "pill-dark"
+                }`}
               >
                 Get started
               </Link>
             </div>
           ))}
         </div>
-        <p className="fade-up text-center text-sm mt-10" style={{ fontFamily: "'DM Sans', sans-serif", color: "#86868b" }}>
+        <p className="fade-up text-center text-[14px] text-[#86868b] mt-12">
           All plans include setup, onboarding, and ongoing support.
         </p>
       </div>
@@ -350,25 +380,23 @@ function Pricing() {
   );
 }
 
-/* ── Final CTA ──────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   FINAL CTA
+   ═══════════════════════════════════════════════════════════════════════ */
 function FinalCTA() {
   return (
-    <section className="py-24 sm:py-32" style={{ background: "#111" }}>
-      <div className="max-w-3xl mx-auto px-6 text-center">
-        <h2 className="fade-up text-4xl sm:text-5xl text-white mb-4">
+    <section className="py-32 sm:py-44 bg-[#111]">
+      <div className="max-w-[680px] mx-auto px-6 text-center">
+        <h2 className="fade-up text-[clamp(2rem,5.5vw,3.5rem)] leading-[1.08] tracking-[-0.02em] text-white mb-5">
           Ready to stop
           <br />
           missing calls?
         </h2>
-        <p className="fade-up text-lg mb-10" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.4)" }}>
+        <p className="fade-up fade-up-delay-1 text-[17px] text-white/35 mb-12">
           See it working on your business in 10 minutes.
         </p>
-        <div className="fade-up">
-          <Link
-            href="/book"
-            className="inline-block bg-white text-[#111] text-base px-8 py-3.5 rounded-[980px] hover:bg-white/90 transition-colors"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}
-          >
+        <div className="fade-up fade-up-delay-2">
+          <Link href="/book" className="pill pill-white">
             Book a call with Tom
           </Link>
         </div>
@@ -377,12 +405,17 @@ function FinalCTA() {
   );
 }
 
-/* ── Footer ─────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════════════ */
 function SiteFooter() {
   return (
-    <footer className="py-8" style={{ background: "#111", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-      <div className="max-w-6xl mx-auto px-6 text-center">
-        <p className="text-sm" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.25)" }}>
+    <footer
+      className="py-7 bg-[#111]"
+      style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+    >
+      <div className="max-w-[980px] mx-auto px-6 text-center">
+        <p className="text-[12px] text-white/20 tracking-wide">
           &copy; 2026 Tom Integrations. Chattanooga, TN.
         </p>
       </div>
@@ -390,7 +423,9 @@ function SiteFooter() {
   );
 }
 
-/* ── Page ────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   PAGE
+   ═══════════════════════════════════════════════════════════════════════ */
 export default function Home() {
   const wrapperRef = useScrollReveal();
 
