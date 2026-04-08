@@ -1,341 +1,409 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
-import HeroBackgroundCanvas from "@/src/components/HeroBackgroundCanvas";
-import { useEffect, useRef, useState } from "react";
 
-export default function Home() {
-  const [demoOpen, setDemoOpen] = useState(false);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  const closeDemo = () => {
-    setDemoOpen(false);
-    if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
-  };
-
+function useScrollReveal() {
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (!demoOpen) return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        closeDemo();
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [demoOpen]);
+    const el = ref.current;
+    if (!el) return;
+    const targets = el.querySelectorAll(".fade-up");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+    targets.forEach((t) => observer.observe(t));
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
+
+/* ── Nav ────────────────────────────────────────────────────────────── */
+function Nav() {
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50" style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}>
+      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+        <Link href="/" className="text-white text-sm tracking-tight" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
+          Tom Integrations
+        </Link>
+        <Link
+          href="/book"
+          className="text-white text-sm px-5 py-2 rounded-[980px] border border-white/25 hover:bg-white/10 transition-colors"
+          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, background: "rgba(255,255,255,0.08)" }}
+        >
+          Book a call
+        </Link>
+      </div>
+    </nav>
+  );
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────── */
+function Hero() {
+  return (
+    <section className="relative h-screen flex items-center justify-center overflow-hidden" style={{ background: "#000" }}>
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ opacity: 0.45 }}
+        src="/videos/home-demo.mp4?v=20cfa3e"
+      />
+      <div className="relative z-10 text-center px-6 max-w-3xl mx-auto">
+        <p className="fade-up text-sm uppercase tracking-[0.2em] mb-6" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.5)" }}>
+          AI for small business
+        </p>
+        <h1 className="fade-up text-5xl sm:text-6xl md:text-7xl text-white leading-[1.05] mb-6">
+          Never miss
+          <br />
+          another call.
+        </h1>
+        <p className="fade-up text-lg sm:text-xl max-w-xl mx-auto mb-10" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.6)" }}>
+          Your AI receptionist answers every call, captures every lead, and
+          books the job — so you don&apos;t have to.
+        </p>
+        <div className="fade-up">
+          <Link
+            href="/book"
+            className="inline-block bg-white text-[#111] text-base px-8 py-3.5 rounded-[980px] hover:bg-white/90 transition-colors"
+            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}
+          >
+            Book a call with Tom
+          </Link>
+          <p className="text-sm mt-4" style={{ color: "rgba(255,255,255,0.35)" }}>
+            Free 10-minute demo. No commitment.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Problem ────────────────────────────────────────────────────────── */
+function Problem() {
+  return (
+    <section className="py-24 sm:py-32" style={{ background: "#f5f5f7" }}>
+      <div className="max-w-3xl mx-auto px-6 text-center">
+        <p className="fade-up text-7xl sm:text-[120px] leading-none text-[#1d1d1f] mb-4">
+          62%
+        </p>
+        <p className="fade-up text-2xl sm:text-3xl text-[#1d1d1f] mb-6" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
+          of callers won&apos;t leave a voicemail.
+        </p>
+        <p className="fade-up text-lg leading-relaxed max-w-xl mx-auto" style={{ fontFamily: "'DM Sans', sans-serif", color: "#86868b" }}>
+          You&apos;re on the job site. On another line. Meanwhile, new customers
+          call, hang up, and call your competitor. Every missed call is money
+          you&apos;ll never see.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ── Services ───────────────────────────────────────────────────────── */
+interface ServiceRowProps {
+  title: string;
+  price: string;
+  description: string;
+  videoSrc: string;
+  reverse?: boolean;
+}
+
+function ServiceRow({ title, price, description, videoSrc, reverse }: ServiceRowProps) {
+  return (
+    <div className={`fade-up grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center ${reverse ? "md:[direction:rtl]" : ""}`}>
+      <div className={reverse ? "md:[direction:ltr]" : ""}>
+        <p className="text-sm uppercase tracking-wider mb-2" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, color: "#86868b" }}>
+          {price}
+        </p>
+        <h3 className="text-3xl sm:text-4xl text-[#1d1d1f] mb-4">{title}</h3>
+        <p className="text-lg leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif", color: "#86868b" }}>
+          {description}
+        </p>
+      </div>
+      <div className={reverse ? "md:[direction:ltr]" : ""}>
+        <div className="rounded-[20px] overflow-hidden" style={{ background: "#000", boxShadow: "0 20px 60px -12px rgba(0,0,0,0.25)" }}>
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full block"
+            src={videoSrc}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Services() {
+  return (
+    <section className="bg-white py-24 sm:py-32">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="text-center mb-20">
+          <h2 className="fade-up text-4xl sm:text-5xl text-[#1d1d1f] mb-4">
+            One system. Every lead captured.
+          </h2>
+          <p className="fade-up text-lg" style={{ fontFamily: "'DM Sans', sans-serif", color: "#86868b" }}>
+            Simple tools that work while you work.
+          </p>
+        </div>
+        <div className="space-y-24 sm:space-y-32">
+          <ServiceRow
+            title="AI Receptionist"
+            price="$99 / mo"
+            description="Your phone is always answered. The AI greets callers, answers questions about your business, books appointments, and sends you a summary — all in a natural, human-like voice."
+            videoSrc="/videos/ai-receptionist.mp4"
+          />
+          <ServiceRow
+            title="Social Media Manager"
+            price="$99 / mo"
+            description="Consistent, on-brand content posted to your accounts every week. We handle the strategy, writing, and scheduling so your business stays visible without you lifting a finger."
+            videoSrc="/videos/ai-social.mp4"
+            reverse
+          />
+          <ServiceRow
+            title="The Complete Package"
+            price="$169 / mo"
+            description="AI receptionist plus social media management bundled together. Every call answered, every post published — one simple bill."
+            videoSrc="/videos/combined-package.mp4"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── How It Works ───────────────────────────────────────────────────── */
+function HowItWorks() {
+  const steps = [
+    {
+      num: "01",
+      title: "Tell us about your business",
+      desc: "A quick call so we understand your services, hours, and how you want calls handled.",
+    },
+    {
+      num: "02",
+      title: "We set up your AI",
+      desc: "We configure your receptionist, train it on your business, and test everything.",
+    },
+    {
+      num: "03",
+      title: "You grow",
+      desc: "Calls get answered, leads get captured, and you focus on what you do best.",
+    },
+  ];
 
   return (
-    <main className="space-y-12 sm:space-y-16">
-      {/* HERO */}
-      <section className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950/70 p-5 sm:p-8">
-        <HeroBackgroundCanvas />
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="relative z-10 grid grid-cols-1 items-center gap-10 md:grid-cols-2">
-          <div>
-          <p className="block w-fit max-w-full rounded-full border border-neutral-800 bg-neutral-900/60 px-3 py-1 text-xs leading-relaxed text-neutral-300">
-            Built for local service businesses
+    <section className="py-24 sm:py-32" style={{ background: "#f5f5f7" }}>
+      <div className="max-w-6xl mx-auto px-6">
+        <h2 className="fade-up text-4xl sm:text-5xl text-[#1d1d1f] text-center mb-16">
+          Up and running in days.
+        </h2>
+        <div className="fade-up grid grid-cols-1 md:grid-cols-3 gap-12">
+          {steps.map((step) => (
+            <div key={step.num} className="text-center md:text-left">
+              <p className="text-5xl mb-4" style={{ color: "#d2d2d7" }}>
+                {step.num}
+              </p>
+              <h3 className="text-2xl text-[#1d1d1f] mb-3">{step.title}</h3>
+              <p className="text-base leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif", color: "#86868b" }}>
+                {step.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Pricing ────────────────────────────────────────────────────────── */
+function Pricing() {
+  const plans = [
+    {
+      name: "Receptionist",
+      price: "$99",
+      period: "/mo",
+      features: [
+        "AI answers every call",
+        "Appointment booking",
+        "Lead capture & summaries",
+        "Custom greeting & FAQs",
+      ],
+      featured: false,
+    },
+    {
+      name: "Complete",
+      price: "$169",
+      period: "/mo",
+      features: [
+        "Everything in Receptionist",
+        "Weekly social media posts",
+        "Content strategy",
+        "Multi-platform publishing",
+      ],
+      featured: true,
+    },
+    {
+      name: "Website",
+      price: "$499",
+      period: " one-time + $19/mo",
+      features: [
+        "Custom designed website",
+        "Mobile responsive",
+        "SEO optimized",
+        "Hosting & maintenance",
+      ],
+      featured: false,
+    },
+  ];
+
+  return (
+    <section className="bg-white py-24 sm:py-32">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <h2 className="fade-up text-4xl sm:text-5xl text-[#1d1d1f] mb-4">
+            Simple pricing.
+          </h2>
+          <p className="fade-up text-lg" style={{ fontFamily: "'DM Sans', sans-serif", color: "#86868b" }}>
+            No contracts. Cancel anytime.
           </p>
-
-          <h1 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl md:text-5xl">
-            Stop missing customers.
-            <span className="text-amber-400"> AI answers calls and books jobs. You stay in control.</span>
-          </h1>
-
-          <p className="mt-5 text-neutral-300">
-            24/7 AI Receptionist + AI Social Media Manager to capture leads and keep you looking active.
-          </p>
-
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="/book"
-              className="rounded-md bg-amber-400 px-5 py-3 text-sm font-semibold text-neutral-950 hover:bg-amber-300 transition-colors"
-            >
-              Book a Demo
-            </Link>
-            <Link
-              href="/pricing"
-              className="rounded-md border border-neutral-800 px-5 py-3 text-sm font-semibold text-neutral-100 hover:border-neutral-700 transition-colors"
-            >
-              View Pricing
-            </Link>
-            <button
-              type="button"
-              onClick={() => setDemoOpen(true)}
-              className="rounded-md border border-neutral-800 px-5 py-3 text-sm font-semibold text-neutral-100 hover:border-neutral-700 transition-colors"
-            >
-              Watch Demo
-            </button>
-          </div>
-
-          <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-neutral-400">
-            <span>24/7 coverage</span>
-            <span>Human approval options</span>
-            <span>Built for local service businesses</span>
-          </div>
-          </div>
-
-          {/* HERO VISUAL */}
-          <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-black/40">
-            <video
-              className="h-auto w-full max-h-[320px] object-contain sm:max-h-[420px]"
-              src="/videos/home-demo.mp4?v=20cfa3e"
-              muted
-              playsInline
-              loop
-              autoPlay
-              preload="metadata"
-            />
-          </div>
         </div>
-      </section>
-
-      {/* VALUE PROPS */}
-      <section className="grid gap-4 md:grid-cols-3">
-        {[
-          {
-            title: "AI Receptionist",
-            body: "Answers calls fast, handles FAQs, captures lead info, and routes the right jobs to you.",
-            href: "/receptionist",
-          },
-          {
-            title: "AI Social Media Manager",
-            body: "Writes on-brand posts, keeps you consistent, and helps you look legit to new customers.",
-            href: "/social",
-          },
-          {
-            title: "Combined Package",
-            body: "One system for calls + content. Best for shops that want growth without hiring staff.",
-            href: "/bundle",
-          },
-        ].map((card) => (
-          <Link
-            key={card.title}
-            href={card.href}
-            className="rounded-xl border border-neutral-800 bg-neutral-900/40 p-6 hover:border-neutral-700 transition-colors"
-          >
-            {card.title === "AI Receptionist" && (
-              <div className="mb-4 overflow-hidden rounded-xl border border-neutral-800 bg-black/40">
-                <video
-                  className="h-auto w-full"
-                  src="/videos/ai-receptionist.mp4"
-                  muted
-                  playsInline
-                  loop
-                  autoPlay
-                  preload="metadata"
-                />
-              </div>
-            )}
-            {card.title === "AI Social Media Manager" && (
-              <div className="mb-4 overflow-hidden rounded-xl border border-neutral-800 bg-black/40">
-                <video
-                  className="h-auto w-full"
-                  src="/videos/ai-social.mp4"
-                  muted
-                  playsInline
-                  loop
-                  autoPlay
-                  preload="metadata"
-                />
-              </div>
-            )}
-            {card.title === "Combined Package" && (
-              <div className="mb-4 overflow-hidden rounded-xl border border-neutral-800 bg-black/40">
-                <video
-                  className="h-auto w-full"
-                  src="/videos/combined-package.mp4"
-                  muted
-                  playsInline
-                  loop
-                  autoPlay
-                  preload="metadata"
-                />
-              </div>
-            )}
-            <h3 className="text-lg font-semibold">
-              <span className="text-amber-400">●</span> {card.title}
-            </h3>
-            <p className="mt-2 text-sm text-neutral-300">{card.body}</p>
-            <p className="mt-4 text-sm font-semibold text-amber-300">Learn more →</p>
-          </Link>
-        ))}
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-8">
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold">How it works</h2>
-            <p className="mt-2 text-neutral-300">
-              Simple setup. Clear control. Real results. You stay in charge.
-            </p>
-          </div>
-          <div className="text-sm text-neutral-400">
-            Typical setup: <span className="text-amber-300 font-semibold">1 to 3 days</span>
-          </div>
-        </div>
-
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-6">
-            <p className="text-xs text-neutral-400">Step 1</p>
-            <h3 className="mt-2 text-lg font-semibold">
-              <span className="text-amber-400">Connect</span> your business
-            </h3>
-            <p className="mt-2 text-sm text-neutral-300">
-              We connect your phone, Facebook page, and your business details (hours, services, FAQs, pricing rules).
-              Then we set the exact lead flow you want.
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-6">
-            <p className="text-xs text-neutral-400">Step 2</p>
-            <h3 className="mt-2 text-lg font-semibold">
-              AI <span className="text-amber-400">handles</span> the work
-            </h3>
-            <p className="mt-2 text-sm text-neutral-300">
-              Calls and messages get handled fast. The AI collects name, need, vehicle/service info, and preferred
-              time, then sends you the lead and next step.
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-6">
-            <p className="text-xs text-neutral-400">Step 3</p>
-            <h3 className="mt-2 text-lg font-semibold">
-              You <span className="text-amber-400">approve</span> and grow
-            </h3>
-            <p className="mt-2 text-sm text-neutral-300">
-              You stay in control. You can approve posts before they publish and review leads as they come in. We
-              track what’s working and improve weekly.
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-6 rounded-lg border border-neutral-800 bg-neutral-950 p-5">
-          <h4 className="font-semibold text-neutral-300">Where leads go</h4>
-          <div className="mt-4 flex flex-col gap-3 text-sm text-neutral-400 md:flex-row md:items-center md:gap-6">
-            <p className="flex items-center gap-2">
-              <span className="text-amber-400">●</span>
-              SMS alerts
-            </p>
-            <p className="flex items-center gap-2">
-              <span className="text-amber-400">●</span>
-              Email summary
-            </p>
-            <p className="flex items-center gap-2">
-              <span className="text-amber-400">●</span>
-              Dashboard log
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-neutral-800 bg-neutral-950 p-5">
-          <p className="text-sm text-neutral-300">
-            Want to see this on your business in 10 minutes?
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/book"
-              className="rounded-md bg-amber-400 px-5 py-2.5 text-sm font-semibold text-neutral-950 hover:bg-amber-300 transition-colors"
+        <div className="fade-up grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {plans.map((plan) => (
+            <div
+              key={plan.name}
+              className="rounded-2xl p-8"
+              style={{
+                background: plan.featured ? "#1d1d1f" : "#f5f5f7",
+                color: plan.featured ? "#fff" : "#1d1d1f",
+              }}
             >
-              Book a Demo
-            </Link>
-            <Link
-              href="/pricing"
-              className="rounded-md border border-neutral-800 px-5 py-2.5 text-sm font-semibold text-neutral-100 hover:border-neutral-700 transition-colors"
-            >
-              View Pricing
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* PROOF */}
-      <section className="rounded-xl border border-neutral-800 bg-neutral-900/30 p-5 sm:p-8">
-        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold">First case study: Interstate Tires</h2>
-            <p className="mt-2 text-neutral-300">
-              We’re using Interstate Tires as the first real-world rollout to prove the system, tighten the workflow,
-              and build a repeatable playbook.
-            </p>
-          </div>
-          <Link
-            href="/case-studies/interstate-tires"
-            className="rounded-md border border-neutral-800 px-5 py-3 text-sm font-semibold text-neutral-100 hover:border-neutral-700 transition-colors"
-          >
-            View Case Study
-          </Link>
-        </div>
-      </section>
-
-      {/* FINAL CTA */}
-      <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-6 text-center sm:p-10">
-        <h2 className="text-3xl font-semibold">Want to see it working on your business?</h2>
-        <p className="mx-auto mt-3 max-w-2xl text-neutral-300">
-          Book a demo and we’ll show you exactly how the receptionist handles calls and how the social manager produces posts.
-        </p>
-        <div className="mt-7 flex flex-wrap justify-center gap-3">
-            <Link
-              href="/book"
-              className="rounded-md bg-amber-400 px-4 py-3 text-sm font-semibold text-neutral-950 hover:bg-amber-300 transition-colors sm:px-6"
-            >
-              Book a Demo
-            </Link>
-            <Link
-              href="/contact"
-              className="rounded-md border border-neutral-800 px-4 py-3 text-sm font-semibold text-neutral-100 hover:border-neutral-700 transition-colors sm:px-6"
-            >
-              Contact
-            </Link>
-        </div>
-      </section>
-
-      {demoOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-          onClick={closeDemo}
-        >
-          <div
-            className="w-full max-w-3xl overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Demo video"
-          >
-            <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-3">
-              <div className="text-sm font-medium text-neutral-200">Quick Demo</div>
-              <button
-                type="button"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-neutral-300 hover:bg-neutral-900/60"
-                onClick={closeDemo}
-                aria-label="Close"
+              <p
+                className="text-sm uppercase tracking-wider mb-4"
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 500,
+                  color: plan.featured ? "rgba(255,255,255,0.5)" : "#86868b",
+                }}
               >
-                ✕
-              </button>
+                {plan.name}
+              </p>
+              <p className="text-4xl mb-1">
+                {plan.price}
+                <span
+                  className="text-base"
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    color: plan.featured ? "rgba(255,255,255,0.4)" : "#86868b",
+                  }}
+                >
+                  {plan.period}
+                </span>
+              </p>
+              <ul className="mt-6 space-y-3">
+                {plan.features.map((f) => (
+                  <li
+                    key={f}
+                    className="text-sm"
+                    style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      color: plan.featured ? "rgba(255,255,255,0.6)" : "#86868b",
+                    }}
+                  >
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/book"
+                className="mt-8 block text-center text-sm py-3 rounded-[980px] transition-colors"
+                style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 500,
+                  background: plan.featured ? "#fff" : "#1d1d1f",
+                  color: plan.featured ? "#1d1d1f" : "#fff",
+                }}
+              >
+                Get started
+              </Link>
             </div>
-
-            <div className="p-3 sm:p-4">
-              <div className="overflow-hidden rounded-xl border border-neutral-800 bg-black">
-                <video
-                  ref={videoRef}
-                  className="h-auto w-full max-h-[70vh] object-contain"
-                  src="/videos/home-demo.mp4?v=20cfa3e"
-                  muted
-                  playsInline
-                  loop
-                  autoPlay
-                  controls
-                  preload="metadata"
-                />
-              </div>
-              <div className="mt-3 text-xs text-neutral-400">Tip: tap fullscreen on mobile for best viewing.</div>
-            </div>
-          </div>
+          ))}
         </div>
-      )}
-    </main>
+        <p className="fade-up text-center text-sm mt-10" style={{ fontFamily: "'DM Sans', sans-serif", color: "#86868b" }}>
+          All plans include setup, onboarding, and ongoing support.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ── Final CTA ──────────────────────────────────────────────────────── */
+function FinalCTA() {
+  return (
+    <section className="py-24 sm:py-32" style={{ background: "#111" }}>
+      <div className="max-w-3xl mx-auto px-6 text-center">
+        <h2 className="fade-up text-4xl sm:text-5xl text-white mb-4">
+          Ready to stop
+          <br />
+          missing calls?
+        </h2>
+        <p className="fade-up text-lg mb-10" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.4)" }}>
+          See it working on your business in 10 minutes.
+        </p>
+        <div className="fade-up">
+          <Link
+            href="/book"
+            className="inline-block bg-white text-[#111] text-base px-8 py-3.5 rounded-[980px] hover:bg-white/90 transition-colors"
+            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}
+          >
+            Book a call with Tom
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────── */
+function SiteFooter() {
+  return (
+    <footer className="py-8" style={{ background: "#111", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+      <div className="max-w-6xl mx-auto px-6 text-center">
+        <p className="text-sm" style={{ fontFamily: "'DM Sans', sans-serif", color: "rgba(255,255,255,0.25)" }}>
+          &copy; 2026 Tom Integrations. Chattanooga, TN.
+        </p>
+      </div>
+    </footer>
+  );
+}
+
+/* ── Page ────────────────────────────────────────────────────────────── */
+export default function Home() {
+  const wrapperRef = useScrollReveal();
+
+  return (
+    <div ref={wrapperRef}>
+      <Nav />
+      <Hero />
+      <Problem />
+      <Services />
+      <HowItWorks />
+      <Pricing />
+      <FinalCTA />
+      <SiteFooter />
+    </div>
   );
 }
