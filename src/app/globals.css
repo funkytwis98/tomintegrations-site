@@ -74,13 +74,20 @@ h1, h2, h3, h4, h5, h6 {
 .pill-dark:hover {
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
 }
-.pill-ghost {
-  background: rgba(255, 255, 255, 0.06);
+.pill-gold {
+  background: #C5A04E;
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.18);
 }
-.pill-ghost:hover {
-  background: rgba(255, 255, 255, 0.12);
+.pill-gold:hover {
+  box-shadow: 0 4px 24px rgba(197, 160, 78, 0.3);
+}
+.pill-ghost-gold {
+  background: rgba(197, 160, 78, 0.15);
+  color: #C5A04E;
+  border: 1px solid rgba(197, 160, 78, 0.4);
+}
+.pill-ghost-gold:hover {
+  background: rgba(197, 160, 78, 0.25);
 }
 
 /* ── Smooth scroll ──────────────────────────────────────────────────── */
