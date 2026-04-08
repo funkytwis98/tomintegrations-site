@@ -83,21 +83,47 @@ export async function POST(request: Request) {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { error: insertError } = await supabase.from("inbox_items").insert({
-      name: String(payload.fullName).trim(),
-      business: String(payload.businessName).trim(),
-      email: String(payload.email).trim(),
-      phone: String(payload.phone).trim(),
-      interest: String(payload.interest).trim(),
-      message: typeof payload.notes === "string" ? payload.notes.trim() : "",
-      type: "demo_request",
-      source: "website",
-      status: "new",
-      created_at: new Date().toISOString(),
-    });
+    const fullName = String(payload.fullName).trim();
+    const businessName = String(payload.businessName).trim();
+    const email = String(payload.email).trim();
+    const phone = String(payload.phone).trim();
+    const interest = String(payload.interest).trim();
+    const message = typeof payload.notes === "string" ? payload.notes.trim() : "";
+    const now = new Date().toISOString();
 
-    if (insertError) {
-      console.error("[book] supabase insert failed:", insertError.message);
+    const [inboxResult, formResult] = await Promise.all([
+      supabase.from("inbox_items").insert({
+        name: fullName,
+        business: businessName,
+        email,
+        phone,
+        interest,
+        message,
+        type: "demo_request",
+        source: "website",
+        status: "new",
+        created_at: now,
+      }),
+      supabase.from("site_form_submissions").insert({
+        full_name: fullName,
+        business_name: businessName,
+        email,
+        phone,
+        interest,
+        message,
+        status: "new",
+        created_at: now,
+      }),
+    ]);
+
+    if (inboxResult.error) {
+      console.error("[book] inbox_items insert failed:", inboxResult.error.message);
+    }
+    if (formResult.error) {
+      console.error("[book] site_form_submissions insert failed:", formResult.error.message);
+    }
+
+    if (inboxResult.error && formResult.error) {
       return Response.json(
         { ok: false, error: "Could not submit your request. Please try again." },
         { status: 500 },
