@@ -1,17 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 type InterestOption = "" | "AI Receptionist" | "AI Social Media Manager" | "Combined Package" | "Not sure yet";
-
-type Slot = {
-  startISO: string;
-  endISO: string;
-  display: string;
-  dayLabel?: string;
-  timeLabel?: string;
-};
 
 type FormValues = {
   fullName: string;
@@ -22,9 +14,7 @@ type FormValues = {
   notes: string;
 };
 
-type FormErrors = Partial<Record<keyof FormValues, string>> & {
-  slot?: string;
-};
+type FormErrors = Partial<Record<keyof FormValues, string>>;
 
 const initialValues: FormValues = {
   fullName: "",
@@ -35,64 +25,12 @@ const initialValues: FormValues = {
   notes: "",
 };
 
-function groupSlotsByDay(slots: Slot[]): Array<{ dayLabel: string; items: Slot[] }> {
-  const groups = new Map<string, Slot[]>();
-  for (const slot of slots) {
-    const dayLabel = slot.dayLabel ?? slot.display;
-    const current = groups.get(dayLabel) ?? [];
-    current.push(slot);
-    groups.set(dayLabel, current);
-  }
-  return Array.from(groups.entries()).map(([dayLabel, items]) => ({ dayLabel, items }));
-}
-
 export default function BookPage() {
-  const [slots, setSlots] = useState<Slot[]>([]);
-  const [slotsLoading, setSlotsLoading] = useState(true);
-  const [slotsError, setSlotsError] = useState<string | null>(null);
-  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
-  const [selectedDayLabel, setSelectedDayLabel] = useState<string>("");
   const [values, setValues] = useState<FormValues>(initialValues);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    async function loadSlots() {
-      setSlotsLoading(true);
-      setSlotsError(null);
-      try {
-        const response = await fetch("/api/availability");
-        const data = (await response.json()) as { ok: boolean; error?: string; slots?: Slot[] };
-        if (!response.ok || !data.ok) {
-          setSlotsError(data.error ?? "Could not load availability.");
-          return;
-        }
-        if (!cancelled) setSlots(data.slots ?? []);
-      } catch {
-        if (!cancelled) setSlotsError("Could not load availability. Please refresh and try again.");
-      } finally {
-        if (!cancelled) setSlotsLoading(false);
-      }
-    }
-    loadSlots();
-    return () => { cancelled = true; };
-  }, []);
-
-  const groupedSlots = useMemo(() => groupSlotsByDay(slots), [slots]);
-  const activeGroup = useMemo(
-    () => groupedSlots.find((g) => g.dayLabel === selectedDayLabel) ?? groupedSlots[0],
-    [groupedSlots, selectedDayLabel],
-  );
-
-  useEffect(() => {
-    if (groupedSlots.length === 0) { setSelectedDayLabel(""); return; }
-    if (!groupedSlots.some((g) => g.dayLabel === selectedDayLabel)) {
-      setSelectedDayLabel(groupedSlots[0].dayLabel);
-    }
-  }, [groupedSlots, selectedDayLabel]);
 
   const setField = <K extends keyof FormValues>(field: K, value: FormValues[K]) => {
     setValues((prev) => ({ ...prev, [field]: value }));
@@ -100,9 +38,8 @@ export default function BookPage() {
     if (submitError) setSubmitError(null);
   };
 
-  function validate(input: FormValues, slot: Slot | null): FormErrors {
+  function validate(input: FormValues): FormErrors {
     const e: FormErrors = {};
-    if (!slot) e.slot = "Please choose an appointment time.";
     if (!input.fullName.trim()) e.fullName = "Full name is required.";
     if (!input.businessName.trim()) e.businessName = "Business name is required.";
     if (!input.email.trim()) e.email = "Email is required.";
@@ -116,22 +53,21 @@ export default function BookPage() {
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitError(null);
-    const nextErrors = validate(values, selectedSlot);
+    const nextErrors = validate(values);
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0 || !selectedSlot) return;
+    if (Object.keys(nextErrors).length > 0) return;
 
     setIsSubmitting(true);
     try {
       const response = await fetch("/api/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, slotStartISO: selectedSlot.startISO, slotEndISO: selectedSlot.endISO }),
+        body: JSON.stringify(values),
       });
       const data = (await response.json()) as { ok: boolean; error?: string; errors?: FormErrors };
       if (response.status === 400 && data.errors) { setErrors((prev) => ({ ...prev, ...data.errors })); return; }
-      if (response.status === 409) { setSubmitError(data.error ?? "That slot is no longer available. Please choose another."); setSelectedSlot(null); return; }
-      if (!response.ok || !data.ok) { setSubmitError(data.error ?? "Could not complete booking. Please try again."); return; }
-      setSuccessMessage("Booking confirmed. Check your email for details.");
+      if (!response.ok || !data.ok) { setSubmitError(data.error ?? "Could not submit your request. Please try again."); return; }
+      setSuccessMessage("Request received! We\u2019ll be in touch shortly.");
       setValues(initialValues);
       setErrors({});
     } catch {
@@ -191,77 +127,6 @@ export default function BookPage() {
             boxShadow: "0 32px 80px -24px rgba(0,0,0,0.4)",
           }}
         >
-          {/* Time picker */}
-          <h2
-            className="text-[17px] text-white/80 mb-5"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-          >
-            Choose a time
-          </h2>
-
-          {slotsLoading && (
-            <p className="text-[14px] text-white/30 mb-6">Loading available slots&hellip;</p>
-          )}
-          {slotsError && (
-            <p className="text-[14px] text-red-400/80 mb-6">{slotsError}</p>
-          )}
-          {!slotsLoading && !slotsError && slots.length === 0 && (
-            <p className="text-[14px] text-white/30 mb-6">No slots are currently open. Please check back soon.</p>
-          )}
-
-          {!slotsLoading && !slotsError && slots.length > 0 && activeGroup && (
-            <div className="space-y-3 mb-8">
-              <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-                {groupedSlots.map((group) => {
-                  const active = group.dayLabel === activeGroup.dayLabel;
-                  return (
-                    <button
-                      key={group.dayLabel}
-                      type="button"
-                      onClick={() => { setSelectedDayLabel(group.dayLabel); setSelectedSlot(null); setSuccessMessage(null); }}
-                      className="shrink-0 px-4 py-2 rounded-full text-[13px] font-medium transition-all duration-200"
-                      style={{
-                        background: active ? "rgba(255,255,255,0.12)" : "transparent",
-                        color: active ? "#fff" : "rgba(255,255,255,0.4)",
-                        border: active
-                          ? "1px solid rgba(255,255,255,0.2)"
-                          : "1px solid rgba(255,255,255,0.06)",
-                      }}
-                    >
-                      {group.dayLabel}
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1">
-                {activeGroup.items.map((slot) => {
-                  const selected = selectedSlot?.startISO === slot.startISO;
-                  return (
-                    <button
-                      key={slot.startISO}
-                      type="button"
-                      onClick={() => { setSelectedSlot(slot); setErrors((p) => ({ ...p, slot: undefined })); setSuccessMessage(null); }}
-                      className="w-full px-4 py-3 rounded-2xl text-left text-[14px] transition-all duration-200"
-                      style={{
-                        background: selected ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.02)",
-                        color: selected ? "#fff" : "rgba(255,255,255,0.5)",
-                        border: selected
-                          ? "1px solid rgba(255,255,255,0.25)"
-                          : "1px solid rgba(255,255,255,0.04)",
-                      }}
-                    >
-                      {slot.timeLabel ?? slot.display}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-          {errors.slot && <p className="text-[12px] text-red-400/80 mb-5">{errors.slot}</p>}
-
-          {/* Divider */}
-          <div className="h-px bg-white/[0.06] mb-7" />
-
           {/* Alerts */}
           {successMessage && (
             <div
@@ -323,7 +188,7 @@ export default function BookPage() {
                 disabled={isSubmitting || Boolean(successMessage)}
                 className="pill pill-white w-full text-center !py-3.5 disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? "Booking\u2026" : successMessage ? "Booked" : "Confirm booking"}
+                {isSubmitting ? "Submitting\u2026" : successMessage ? "Sent" : "Request a demo"}
               </button>
             </div>
           </form>
